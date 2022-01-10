@@ -2,12 +2,21 @@
 #include <Adafruit_SSD1306.h>
 #include <Button2.h> 
 #include <ESPRotary.h>
+#include <max6675.h>
+#include <Ticker.h>
 
 byte currentTemp;
 byte targetTemp;
 byte power;
+bool isCooling;
 
 #define MAX_POWER  3
+#define MIN_POWER  1
+#define PIN_4KWT  1
+#define PIN_8KWT  2
+#define PIN_12KWT  3
+byte powerPins [3]= {PIN_4KWT, PIN_8KWT, PIN_12KWT};
+
 
 // screen properties
 #define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -28,22 +37,27 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 ESPRotary r;
 Button2 b;
 
+// termopair properties
+int thermoDO = 4;
+int thermoCS = 5;
+int thermoCLK = 6;
+MAX6675 thermocouple(thermoCLK, thermoCS, thermoDO);
+
+// timer
+Ticker timer(stopCoolingOff, 3*60*1000, 0, MICROS_MICROS);
+
 void setup() {
+  // pin modes
+  pinMode(13, OUTPUT); 
+
   // init serial
   Serial.begin (9600);
   delay(50);
   
-  // set default params
-  setDefaultParams();
+  setDefaultParams(b);
 
-  // init rotary encoder 
-  b.begin(BUTTON_PIN);
-  b.setTapHandler(setPower);
-  b.setLongClickHandler(setDefaultParams);
-  r.begin(ROTARY_PIN1, ROTARY_PIN2, CLICKS_PER_STEP, MIN_POS, MAX_POS, START_POS, INCREMENT);
-  r.setChangedHandler(manageTemperatureChange);
+  initRotaryEncoder();
 
-  // init screen
   initDisplay();
 }
 
@@ -62,23 +76,45 @@ void initDisplay(){
   display.clearDisplay();
 }
 
+void initRotaryEncoder(){
+  b.begin(BUTTON_PIN);
+  b.setTapHandler(setPower);
+  b.setLongClickHandler(setDefaultParams);
+  r.begin(ROTARY_PIN1, ROTARY_PIN2, CLICKS_PER_STEP, MIN_POS, MAX_POS, START_POS, INCREMENT);
+  r.setChangedHandler(manageTemperatureChange);
+}
+
 void loop() {
-  // manage power
+  timer.update();
 
   // read target temperature
   r.loop();
   b.loop();
 
   // read current temperature
+  currentTemp = (byte)thermocouple.readCelsius();
 
-  if(currentTemp >= targetTemp){
-    // start heating
-  }
-  else{
-    // wait for cooling
+  for (byte i = 0; i < power; i++)
+  {
+    byte powerPin = powerPins[i];
+    if (currentTemp < targetTemp && !isCooling){
+      // start heating
+      digitalWrite(powerPin, HIGH);
+    }
+    else{
+      // wait for coolling
+      isCooling = true;
+      timer.stop();
+      digitalWrite(powerPin, LOW);
+    }
   }
 
   writeTextOnScreen();
+  delay(500);
+}
+
+void stopCoolingOff(){
+ isCooling = false;
 }
 
 void writeTextOnScreen(){
@@ -87,7 +123,7 @@ void writeTextOnScreen(){
   display.setTextSize(1);             
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0,0);             
-  display.printf(PSTR("C: %i; T: %i"), currentTemp, targetTemp);
+  display.printf(PSTR("C: %i; T: %i; P: %i"), currentTemp, targetTemp, power);
 
   display.display();
 }
@@ -95,7 +131,7 @@ void writeTextOnScreen(){
 void setPower(Button2& btn){
   power++;
   if(power > MAX_POWER)
-    power = 0;
+    power = MIN_POWER;
 }
 
 void setDefaultParams(Button2& btn){
