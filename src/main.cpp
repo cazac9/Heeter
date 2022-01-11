@@ -105,7 +105,7 @@ void loop() {
       else{
         // wait for coolling
         isCooling = true;
-        timer.stop();
+        timer.start();
         digitalWrite(powerPin, LOW);
       }
     }
@@ -118,6 +118,7 @@ void loop() {
 
 void stopCoolingOff(){
  isCooling = false;
+ timer.stop();
 }
 
 void writeTextOnScreen(){
