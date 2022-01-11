@@ -94,20 +94,23 @@ void loop() {
   // read current temperature
   currentTemp = (byte)thermocouple.readCelsius();
 
-  for (byte i = 0; i < power; i++)
-  {
-    byte powerPin = powerPins[i];
-    if (currentTemp < targetTemp && !isCooling){
-      // start heating
-      digitalWrite(powerPin, HIGH);
-    }
-    else{
-      // wait for coolling
-      isCooling = true;
-      timer.stop();
-      digitalWrite(powerPin, LOW);
+  if(!isCooling){
+    for (byte i = 0; i < power; i++)
+    {
+      byte powerPin = powerPins[i];
+      if (currentTemp < targetTemp){
+        // start heating
+        digitalWrite(powerPin, HIGH);
+      }
+      else{
+        // wait for coolling
+        isCooling = true;
+        timer.stop();
+        digitalWrite(powerPin, LOW);
+      }
     }
   }
+  
 
   writeTextOnScreen();
   delay(500);
