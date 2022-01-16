@@ -11,14 +11,21 @@
 byte currentTemp;
 byte targetTemp;
 byte power;
-// bool isCooling;
+bool isCooling;
 
+// init heaters
 #define MAX_POWER  3
 #define MIN_POWER  1
-// #define PIN_4KWT  1
-// #define PIN_8KWT  2
-// #define PIN_12KWT  3
-// byte powerPins [3]= {PIN_4KWT, PIN_8KWT, PIN_12KWT};
+#define PIN_4KWT  5
+#define PIN_8KWT  18
+#define PIN_12KWT  19
+byte powerPins [3]= {PIN_4KWT, PIN_8KWT, PIN_12KWT};
+
+void initHeaters(){
+  for (byte i = 0; i < MAX_POWER; i++){
+    pinMode(powerPins[i], OUTPUT);
+  }
+}
 
 
 // screen properties
@@ -61,16 +68,23 @@ void writeTextOnScreen(){
 ESPRotary r;
 Button2 b;
 
-void setPower(Button2& btn){
-  Serial.println("Pressed set power");
-  power++;
+void setPower(byte value){
+  power = value;
   if(power > MAX_POWER)
     power = MIN_POWER;
+
+  for (byte i = 0; i < MAX_POWER; i++)
+    digitalWrite(powerPins[i], powerPins[i] <= power ? HIGH : LOW);
+}
+
+void setPowerCallback(Button2& btn){
+  Serial.println("Pressed set power");
+  setPower(power + 1);
 }
 
 void setDefaultParams(Button2& btn){
   Serial.println("Pressed set default params");
-  power = 2;
+  setPower(2);
   targetTemp = 40;
 }
 
@@ -82,7 +96,7 @@ void manageTemperatureChange(ESPRotary& r) {
 void initRotaryEncoder(){
   Serial.println("Start initing rotary encoder");
   b.begin(BUTTON_PIN);
-  b.setTapHandler(setPower);
+  b.setTapHandler(setPowerCallback);
   b.setLongClickHandler(setDefaultParams);
   r.begin(ROTARY_PIN1, ROTARY_PIN2, CLICKS_PER_STEP, MIN_POS, MAX_POS, START_POS, INCREMENT);
   r.setChangedHandler(manageTemperatureChange);
@@ -105,11 +119,8 @@ void setup() {
   initDisplay();
   initRotaryEncoder();
   setDefaultParams(b);
+  initHeaters();
 }
-
-
-
-
 
 void loop() {
   // timer.update();
@@ -118,31 +129,29 @@ void loop() {
   r.loop();
   b.loop();
 
-  // read current temperature
   currentTemp = (byte)thermocouple.readCelsius();
   Serial.println(thermocouple.readCelsius());
-  delay(500);
+  //delay(500);
 
-  // if(!isCooling){
-  //   for (byte i = 0; i < power; i++)
-  //   {
-  //     byte powerPin = powerPins[i];
-  //     if (currentTemp < targetTemp){
-  //       // start heating
-  //       digitalWrite(powerPin, HIGH);
-  //     }
-  //     else{
-  //       // wait for coolling
-  //       isCooling = true;
-  //       timer.start();
-  //       digitalWrite(powerPin, LOW);
-  //     }
-  //   }
-  // }
+  if(!isCooling){
+    for (byte i = 0; i < power; i++)
+    {
+      byte powerPin = powerPins[i];
+      if (currentTemp < targetTemp){
+        // start heating
+        digitalWrite(powerPin, HIGH);
+      }
+      else{
+        // wait for coolling
+        isCooling = true;
+       // timer.start();
+        digitalWrite(powerPin, LOW);
+      }
+    }
+  }
   
 
   writeTextOnScreen();
-  // delay(500);
 }
 
 // void stopCoolingOff(){
