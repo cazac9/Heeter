@@ -7,7 +7,13 @@
 
 #define SDA_PIN 22
 #define SCL_PIN 23
-
+//todo: encoder more than max
+// check cooling heating
+// do something with innertion
+// tasks
+// http
+// check if water is moving
+// android app
 byte currentTemp;
 byte targetTemp;
 byte power;
