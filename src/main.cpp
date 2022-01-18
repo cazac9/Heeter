@@ -38,7 +38,7 @@ byte calculatePower(){
 
 void setDefaultParams(){
   controlMsg.power = 2;
-  controlMsg.targetTemp = 40;
+  controlMsg.targetTemp = 27;
 }
 
 void setup() {
@@ -91,7 +91,8 @@ void loop() {
         break;
     }
 
-    xQueueSend(displayQ, &controlMsg, portMAX_DELAY);
+    Serial.println("Sending message to display and heaters");
+    //xQueueSend(displayQ, &controlMsg, portMAX_DELAY);
     xQueueSend(heatersQ, &controlMsg, portMAX_DELAY);
   }
 }

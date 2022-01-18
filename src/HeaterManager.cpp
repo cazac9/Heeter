@@ -17,17 +17,24 @@ void HeaterManager::runTask(void *pvParam){
 
   while (true)
   {
+    Serial.println("Heater manager");
     if(xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE){
+      Serial.println(msg.currentTemp );
+      Serial.println(msg.targetTemp);
       if (msg.currentTemp < msg.targetTemp){
+        Serial.println("Heater manager warming");
         for (byte i = 0; i < MAX_POWER; i++){
-          digitalWrite(powerPins[i], powerPins[i] <= msg.power ? HIGH : LOW);
+          digitalWrite(powerPins[i], i < msg.power ? HIGH : LOW);
+          Serial.println(i < msg.power ? HIGH : LOW);
         }
       } else {
+        Serial.println("Heater manager cooling");
         for (byte i = 0; i < MAX_POWER; i++){
           digitalWrite(powerPins[i], LOW);
           vTaskDelay(WAIT_3MINS / portTICK_PERIOD_MS);
         }
       }
     }
+
   }
 }

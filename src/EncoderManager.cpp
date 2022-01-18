@@ -45,5 +45,6 @@ void EncoderManager::runTask(void *pvParam){
   {
       r.loop();
       b.loop();
+      vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }
