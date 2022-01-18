@@ -10,6 +10,8 @@
 // http
 // check if water is moving
 // android app
+// schedule
+// easyeda
 
 QueueHandle_t displayQ;
 QueueHandle_t heatersQ;
