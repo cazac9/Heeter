@@ -55,7 +55,7 @@ void setup() {
   if(!heatersQ) 
   halt("Error creating encoder queue");
 
-  if(xTaskCreate(DisplayManager::runTask, "display", 1024, displayQ, 1, &display) != pdPASS)
+  if(xTaskCreate(DisplayManager::runTask, "display", 10000, displayQ, 1, &display) != pdPASS)
     halt("Erorr creating display task");
 
   if(xTaskCreate(HeaterManager::runTask, "heaters", 1024, heatersQ, 1, &heaters) != pdPASS)
@@ -91,8 +91,7 @@ void loop() {
         break;
     }
 
-    Serial.println("Sending message to display and heaters");
-    //xQueueSend(displayQ, &controlMsg, portMAX_DELAY);
+    xQueueSend(displayQ, &controlMsg, portMAX_DELAY);
     xQueueSend(heatersQ, &controlMsg, portMAX_DELAY);
   }
 }

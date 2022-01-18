@@ -9,7 +9,6 @@ void TermocoupleManager::runTask(void *pvParam){
   ParamsMessage params;
   while (true)
   {
-    Serial.println("Termocouple task");
     params.currentTemp = (byte)thermocouple.readCelsius();
     params.command = CT_SET;
     xQueueSend((QueueHandle_t)pvParam, &params, portMAX_DELAY);

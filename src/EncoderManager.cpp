@@ -12,15 +12,23 @@ ParamsMessage params;
 #define MAX_POS         80
 #define START_POS       20
 void setPowerCallback(Button2& btn){
-  Serial.println("Pressed set power");
-  params.command = POWER_UP;
-  xQueueSend(encoderQ, &params, portMAX_DELAY);
+  unsigned int time = btn.wasPressedFor();
+  if (time < 1000)
+  {
+    Serial.println("Pressed set power");
+    params.command = POWER_UP;
+    xQueueSend(encoderQ, &params, portMAX_DELAY);
+  }
 }
 
 void setDefaultParamsCallback(Button2& btn){
-  Serial.println("Pressed set default params");
-  params.command = DEFAULTS;
-  xQueueSend(encoderQ, &params, portMAX_DELAY);
+  unsigned int time = btn.wasPressedFor();
+  if (time > 1000)
+  {
+    Serial.println("Pressed set default params");
+    params.command = DEFAULTS;
+    xQueueSend(encoderQ, &params, portMAX_DELAY);
+  }
 }
 
 void manageTemperatureChange(ESPRotary& r) {
