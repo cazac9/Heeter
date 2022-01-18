@@ -41,7 +41,6 @@ void manageTemperatureChange(ESPRotary& r) {
 void EncoderManager::runTask(void *pvParam){
   encoderQ = (QueueHandle_t)pvParam;
 
-  Serial.println("Start initing rotary encoder");
   ESPRotary r;
   Button2 b;
   b.begin(14);
