@@ -20,7 +20,7 @@ TaskHandle_t termocouple;
 TaskHandle_t heaters;
 TaskHandle_t encoder;
 
- ParamsMessage controlMsg;
+ParamsMessage controlMsg;
 
 void halt(const char *msg){
   Serial.println(msg);

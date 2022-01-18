@@ -18,16 +18,13 @@ void HeaterManager::runTask(void *pvParam){
   while (true)
   {
     if(xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE){
-      for (byte i = 0; i < MAX_POWER; i++)
-        digitalWrite(powerPins[i], powerPins[i] <= msg.power ? HIGH : LOW);
-      
       if (msg.currentTemp < msg.targetTemp){
-        for (byte i = 0; i < msg.power; i++){
-          digitalWrite(powerPins[i], HIGH);
+        for (byte i = 0; i < MAX_POWER; i++){
+          digitalWrite(powerPins[i], powerPins[i] <= msg.power ? HIGH : LOW);
         }
       } else {
-        for (byte i = 0; i < msg.power; i++){
-          digitalWrite(powerPins[i], HIGH);
+        for (byte i = 0; i < MAX_POWER; i++){
+          digitalWrite(powerPins[i], LOW);
           vTaskDelay(WAIT_3MINS / portTICK_PERIOD_MS);
         }
       }
