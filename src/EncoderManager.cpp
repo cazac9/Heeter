@@ -10,7 +10,7 @@ ParamsMessage params;
 
 #define MIN_POS         20
 #define MAX_POS         80
-#define START_POS       20
+#define START_POS       DEFAULT_TEMP
 void setPowerCallback(Button2& btn){
   unsigned int time = btn.wasPressedFor();
   if (time < 1000)

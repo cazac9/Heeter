@@ -38,7 +38,7 @@ byte calculatePower(){
 
 void setDefaultParams(){
   controlMsg.power = 2;
-  controlMsg.targetTemp = 27;
+  controlMsg.targetTemp = DEFAULT_TEMP;
 }
 
 void setup() {
