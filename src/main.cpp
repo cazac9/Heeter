@@ -25,8 +25,8 @@ TaskHandle_t encoder;
 
 ParamsMessage controlMsg;
 
-void halt(const char *msg){
-  Serial.println(msg);
+void halt(const char *msg, const char *param){
+  Serial.printf(msg);
   Serial.flush();
   esp_deep_sleep_start();
 }
@@ -44,31 +44,29 @@ void setDefaultParams(){
   controlMsg.targetTemp = DEFAULT_TEMP;
 }
 
+QueueHandle_t createQueue(const char * name){
+  QueueHandle_t queue = xQueueCreate(32, sizeof(ParamsMessage));
+  if(!inputQ) 
+    halt("Error creating %s queue", name);
+
+  return queue;
+}
+
+void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, TaskHandle_t handle, int stack = 1024){
+  if(xTaskCreate(task, name, stack, q, 1, &handle) != pdPASS)
+    halt("Erorr creating %s task", name);
+}
+
 void setup() {
   Serial.begin (115200);
-  inputQ = xQueueCreate(32, sizeof(ParamsMessage));
-  if(!inputQ) 
-    halt("Error creating input queue");
-  
-  displayQ = xQueueCreate(32, sizeof(ParamsMessage));
-  if(!displayQ) 
-    halt("Error creating display queue");
+  inputQ = createQueue("input");
+  displayQ = createQueue("display");
+  heatersQ = createQueue("heaters");
 
-  heatersQ = xQueueCreate(32, sizeof(ParamsMessage));
-  if(!heatersQ) 
-  halt("Error creating encoder queue");
-
-  if(xTaskCreate(DisplayManager::runTask, "display", 10000, displayQ, 1, &display) != pdPASS)
-    halt("Erorr creating display task");
-
-  if(xTaskCreate(HeaterManager::runTask, "heaters", 1024, heatersQ, 1, &heaters) != pdPASS)
-    halt("Erorr creating heaters task");
-
-  if(xTaskCreate(TermocoupleManager::runTask, "termocouple", 1024, inputQ, 1, &termocouple) != pdPASS)
-    halt("Erorr creating termocouple task");
-
-  if(xTaskCreate(EncoderManager::runTask, "encoder", 1024, inputQ, 1, &encoder) != pdPASS)
-    halt("Erorr creating encoder task");
+  createTask(DisplayManager::runTask, "display", displayQ, &display, 10000);
+  createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
+  createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
+  createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
 
   setDefaultParams();
 }
