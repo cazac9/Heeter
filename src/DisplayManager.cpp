@@ -27,6 +27,7 @@ void DisplayManager::runTask(void *pvParam){
       display.printf("Current %i\n", msg.currentTemp);
       display.printf("Target  %i\n", msg.targetTemp);
       display.printf("Power   %i", msg.power);
+      display.print(msg.dateTime);
       display.display();
     }
   }

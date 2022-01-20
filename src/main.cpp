@@ -5,12 +5,14 @@
 #include <DisplayManager.h>
 #include <EncoderManager.h>
 #include <Globals.h>
+#include <WifiMonitor.h>
+#include <TimeManager.h>
 //todo:
 // do something with innertion
 // http
 // check if water is moving
 // android app
-// get time https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Kiev
+
 // introduce schedule 
 // ota
 
@@ -22,6 +24,8 @@ TaskHandle_t display;
 TaskHandle_t termocouple;
 TaskHandle_t heaters;
 TaskHandle_t encoder;
+TaskHandle_t wifi;
+TaskHandle_t time;
 
 ParamsMessage controlMsg;
 
@@ -67,7 +71,8 @@ void setup() {
   createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
   createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
-
+  createTask(TimeManager::runTask, "time", inputQ, &time);
+  createTask(WifiMonitor::runTask, "wifi", NULL, &wifi);
   setDefaultParams();
 }
 
@@ -84,6 +89,9 @@ void loop() {
         break;
       case POWER_UP:
         controlMsg.power = calculatePower();
+        break;
+      case DATE_TIME:
+        controlMsg.dateTime = paramsMsg.dateTime;
         break;
       case DEFAULTS:
         setDefaultParams();
