@@ -5,11 +5,14 @@
 #include <DisplayManager.h>
 #include <EncoderManager.h>
 #include <Globals.h>
-//todo: encoder more than max
+//todo:
 // do something with innertion
 // http
 // check if water is moving
 // android app
+// get time https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Kiev
+// introduce schedule 
+// ota
 
 QueueHandle_t displayQ;
 QueueHandle_t heatersQ;
