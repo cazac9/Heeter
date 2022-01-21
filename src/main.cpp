@@ -88,7 +88,7 @@ ESP_LOGI(TAG, "The current date/time in Shanghai is: %s", strftime_buf);
   createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
   createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
-  createTask(TimeManager::runTask, "time", inputQ, &dateTime);
+  createTask(WifiMonitor::runTask, "monitor", NULL, &wifi);
   setDefaultParams();
 }
 
