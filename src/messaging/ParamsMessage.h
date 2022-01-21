@@ -9,8 +9,8 @@ class ParamsMessage {
     byte currentTemp;
     byte targetTemp;
     byte power;
+    String dateTime;
     Command command;
-    ParamsMessage(byte ct, byte tt, byte p, Command cmd);
-    ParamsMessage();
+    ParamsMessage(){};
 };
 #endif
