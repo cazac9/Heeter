@@ -6,7 +6,6 @@
 #include <EncoderManager.h>
 #include <Globals.h>
 #include <WifiMonitor.h>
-#include <TimeManager.h>
 #include <esp_sntp.h>
 #include <time.h>
 
@@ -28,7 +27,6 @@ TaskHandle_t termocouple;
 TaskHandle_t heaters;
 TaskHandle_t encoder;
 TaskHandle_t wifi;
-TaskHandle_t dateTime;
 
 ParamsMessage controlMsg;
 
@@ -91,7 +89,6 @@ ESP_LOGI(TAG, "The current date/time in Shanghai is: %s", strftime_buf);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
   createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
   createTask(TimeManager::runTask, "time", inputQ, &dateTime);
-  createTask(WifiMonitor::runTask, "wifi", NULL, &wifi);
   setDefaultParams();
 }
 
