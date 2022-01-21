@@ -62,9 +62,11 @@ void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, TaskHan
     halt("Erorr creating %s task", name);
 }
 
-void setup() {
+void configureTime(){
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
-  sntp_setservername(0, "pool.ntp.org");
+  sntp_setservername(0, "ua.pool.ntp.org");
+  sntp_setservername(1, "time.google.com");
+  sntp_setservername(2, "pl.pool.ntp.org");
   sntp_init();
 
   time_t now;
@@ -72,13 +74,14 @@ void setup() {
   struct tm timeinfo;
 
   time(&now);
-  setenv("TZ", "CST-8", 1);
+  setenv("TZ", "GMT+2", 1);
   tzset();
 
-localtime_r(&now, &timeinfo);
-strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-ESP_LOGI(TAG, "The current date/time in Shanghai is: %s", strftime_buf);
+  localtime_r(&now, &timeinfo);
+  strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+}
 
+void setup() {
   Serial.begin (115200);
   inputQ = createQueue("input");
   displayQ = createQueue("display");
@@ -89,7 +92,9 @@ ESP_LOGI(TAG, "The current date/time in Shanghai is: %s", strftime_buf);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
   createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
   createTask(WifiMonitor::runTask, "monitor", NULL, &wifi);
+
   setDefaultParams();
+  configureTime();
 }
 
 void loop() {
