@@ -111,9 +111,6 @@ void loop() {
       case POWER_UP:
         controlMsg.power = calculatePower();
         break;
-      case DATE_TIME:
-        controlMsg.dateTime = paramsMsg.dateTime;
-        break;
       case DEFAULTS:
         setDefaultParams();
         break;

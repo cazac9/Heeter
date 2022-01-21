@@ -11,7 +11,6 @@ enum Command : byte {
   CT_SET,
   TT_SET,
   POWER_UP,
-  DEFAULTS,
-  DATE_TIME
+  DEFAULTS
 };
 #endif
