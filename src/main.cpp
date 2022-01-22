@@ -53,7 +53,7 @@ void setDefaultParams(){
 
 QueueHandle_t createQueue(const char * name){
   QueueHandle_t queue = xQueueCreate(32, sizeof(ParamsMessage));
-  if(!inputQ) 
+  if(!queue) 
     halt("Error creating %s queue", name);
 
   return queue;
