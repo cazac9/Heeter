@@ -26,7 +26,11 @@ void DisplayManager::runTask(void *pvParam){
       display.setCursor(0,0);
       display.printf("Current %i\n", msg.currentTemp);
       display.printf("Target  %i\n", msg.targetTemp);
-      display.printf("Power   %i", msg.power);
+      display.printf("Power   %i\n", msg.power);
+      struct tm timeinfo;
+      if(getLocalTime(&timeinfo)){
+        display.print(&timeinfo, "%H:%M:%S");
+      }
       display.display();
     }
   }

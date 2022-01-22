@@ -41,12 +41,6 @@ void WifiMonitor::runTask(void *pvParam){
   Serial.println("started wifi task done");
   while (true)
   {
-    struct tm timeinfo;
-    if(!getLocalTime(&timeinfo)){
-      Serial.println("Failed to get time");
-    }
-    Serial.println(&timeinfo, "%H:%M:%S");
-
     vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 }
