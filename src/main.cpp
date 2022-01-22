@@ -6,8 +6,6 @@
 #include <EncoderManager.h>
 #include <Globals.h>
 #include <WifiMonitor.h>
-#include <esp_sntp.h>
-#include <time.h>
 
 //todo:
 // do something with innertion
@@ -64,27 +62,9 @@ void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, TaskHan
     halt("Erorr creating %s task", name);
 }
 
-void configureTime(){
-  sntp_setoperatingmode(SNTP_OPMODE_POLL);
-  sntp_setservername(0, "ua.pool.ntp.org");
-  sntp_setservername(1, "time.google.com");
-  sntp_setservername(2, "pl.pool.ntp.org");
-  sntp_init();
-
-  time_t now;
-  char strftime_buf[64];
-  struct tm timeinfo;
-
-  time(&now);
-  setenv("TZ", "GMT+2", 1);
-  tzset();
-
-  localtime_r(&now, &timeinfo);
-  strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-}
-
 void setup() {
   Serial.begin (115200);
+
   inputQ = createQueue("input");
   displayQ = createQueue("display");
   heatersQ = createQueue("heaters");
@@ -93,10 +73,9 @@ void setup() {
   createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
   createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
-  createTask(WifiMonitor::runTask, "monitor", NULL, &wifi);
+  createTask(WifiMonitor::runTask, "monitor", NULL, &wifi, 10000);
 
   setDefaultParams();
-  configureTime();
 }
 
 void loop() {
@@ -124,3 +103,4 @@ void loop() {
     xQueueSend(heatersQ, &controlMsg, portMAX_DELAY);
   }
 }
+
