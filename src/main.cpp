@@ -29,7 +29,7 @@ TaskHandle_t wifi;
 ParamsMessage controlMsg;
 
 void halt(const char *msg, const char *param){
-  Serial.printf(msg);
+  Serial.printf(msg, param);
   Serial.flush();
   esp_deep_sleep_start();
 }
