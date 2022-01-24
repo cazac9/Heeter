@@ -33,8 +33,8 @@ void halt(const char *msg, const char *param){
   esp_deep_sleep_start();
 }
 
-byte calculatePower(){
-  byte power = controlMsg.power + 1;
+uint8_t calculatePower(){
+  uint8_t power = controlMsg.power + 1;
   if(power > MAX_POWER)
     power = MIN_POWER;
   

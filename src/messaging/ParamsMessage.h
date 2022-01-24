@@ -1,14 +1,13 @@
-#include <Arduino.h>
-#include <Globals.h>
-
 #ifndef PARAMS_MESSAGE_H
 #define PARAMS_MESSAGE_H
 
+#include <Globals.h>
+
 class ParamsMessage {
   public:
-    byte currentTemp;
-    byte targetTemp;
-    byte power;
+    uint8_t currentTemp;
+    uint8_t targetTemp;
+    uint8_t power;
     String dateTime;
     Command command;
     ParamsMessage(){};
