@@ -1,6 +1,5 @@
 #include <ESPRotary.h>
 #include <Button2.h> 
-#include <Arduino.h>
 #include <EncoderManager.h>
 #include <Globals.h>
 #include <messaging/ParamsMessage.h>

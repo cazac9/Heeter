@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <messaging/ParamsMessage.h>
 #include <HeaterManager.h>
 #include <Globals.h>

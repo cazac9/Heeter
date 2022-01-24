@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <DisplayManager.h>
 #include <Adafruit_SSD1306.h>
 #include <messaging/ParamsMessage.h>

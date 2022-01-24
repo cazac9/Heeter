@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <max6675.h>
 #include <TermocoupleManager.h>
 #include <messaging/ParamsMessage.h>
