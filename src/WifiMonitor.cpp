@@ -2,6 +2,7 @@
 #include <WifiMonitor.h>
 #include <esp_sntp.h>
 #include <time.h>
+#include <TelnetStream.h>
 #include <credentials.h>
 
 
@@ -28,10 +29,22 @@ void WifiMonitor::runTask(void *pvParam){
 
   Serial.println("connected to wifi");
   configureTime();
+
+  TelnetStream.begin();
   
   Serial.println("started wifi task done");
   while (true)
   {
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    switch (TelnetStream.read()) {
+      case 'R':
+        TelnetStream.stop();
+        delay(100);
+        ESP.restart();
+        break;
+      case 'C':
+        TelnetStream.println("bye bye");
+        TelnetStream.stop();
+        break;
+    }
   }
 }
