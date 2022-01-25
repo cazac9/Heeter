@@ -5,6 +5,7 @@
 #include <EncoderManager.h>
 #include <Globals.h>
 #include <WifiMonitor.h>
+#include <HttpApiManageger.h>
 
 //todo:
 // do something with innertion
@@ -18,12 +19,14 @@
 QueueHandle_t displayQ;
 QueueHandle_t heatersQ;
 QueueHandle_t inputQ;
+QueueHandle_t httpQ;
 
 TaskHandle_t display;
 TaskHandle_t termocouple;
 TaskHandle_t heaters;
 TaskHandle_t encoder;
 TaskHandle_t wifi;
+TaskHandle_t httpApi;
 
 ParamsMessage controlMsg;
 
@@ -65,12 +68,15 @@ void setup() {
   inputQ = createQueue("input");
   displayQ = createQueue("display");
   heatersQ = createQueue("heaters");
+  httpQ = createQueue("http");
 
-  createTask(DisplayManager::runTask, "display", displayQ, &display, 10000);
+  QueueHandle_t queues[] = {inputQ, httpQ};
+  createTask(DisplayManager::runTask, "display", displayQ, &display, 10 * 1024);
   createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
   createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
-  createTask(WifiMonitor::runTask, "monitor", NULL, &wifi, 10000);
+  createTask(HttpApiManageger::runTask, "server", queues, &httpApi, 10 * 1024);
+  createTask(WifiMonitor::runTask, "monitor", NULL, &wifi, 10 * 1024);
 
   setDefaultParams();
 }
@@ -100,4 +106,3 @@ void loop() {
     xQueueSend(heatersQ, &controlMsg, portMAX_DELAY);
   }
 }
-

@@ -29,6 +29,8 @@ void WifiMonitor::runTask(void *pvParam){
 
   Serial.println("connected to wifi");
   configureTime();
+  
+  Serial.println(WiFi.localIP());
 
   TelnetStream.begin();
   
