@@ -2,14 +2,8 @@
 #include <WifiMonitor.h>
 #include <esp_sntp.h>
 #include <time.h>
+#include <credentials.h>
 
-#define SSID "realme C21Y"
-#define PASSWORD "sedgi38smeeaerk"
-
-void Wifi_disconnected(WiFiEvent_t event, WiFiEventInfo_t info){
-  Serial.println("disconnect");
-  WiFi.begin(SSID, PASSWORD);
-}
 
 void configureTime(){
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
@@ -22,10 +16,10 @@ void configureTime(){
   tzset();
 }
 
-
 void WifiMonitor::runTask(void *pvParam){
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
+  WiFi.setAutoReconnect(true);
   while (WiFi.status() != WL_CONNECTED)
   {
     vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -35,8 +29,6 @@ void WifiMonitor::runTask(void *pvParam){
   Serial.println("connected to wifi");
   configureTime();
   
-
-  WiFi.onEvent(Wifi_disconnected, SYSTEM_EVENT_AP_STADISCONNECTED);
   Serial.println("started wifi task done");
   while (true)
   {
