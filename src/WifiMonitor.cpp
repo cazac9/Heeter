@@ -21,6 +21,7 @@ void WifiMonitor::runTask(void *pvParam){
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
   WiFi.setAutoReconnect(true);
+  pinMode(LED_BUILTIN, OUTPUT);
   while (WiFi.status() != WL_CONNECTED)
   {
     vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -35,6 +36,7 @@ void WifiMonitor::runTask(void *pvParam){
   TelnetStream.begin();
   
   Serial.println("started wifi task done");
+  digitalWrite(LED_BUILTIN, HIGH);
   while (true)
   {
     switch (TelnetStream.read()) {

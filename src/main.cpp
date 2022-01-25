@@ -9,7 +9,6 @@
 
 //todo:
 // do something with innertion
-// http
 // check if water is moving
 // android app
 // introduce schedule 
