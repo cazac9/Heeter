@@ -69,7 +69,6 @@ void setup() {
   heatersQ = createQueue("heaters");
   httpQ = createQueue("http");
 
-  //QueueHandle_t queues[] = {inputQ, httpQ};
   QueueHandle_t* queues = (QueueHandle_t*)malloc(sizeof(QueueHandle_t)*2);
   queues[0] = inputQ;
   queues[1] = httpQ;
@@ -97,6 +96,10 @@ void loop() {
       case POWER_UP:
         controlMsg.power = calculatePower();
         break;
+      case TT_POWER_SET:
+        controlMsg.targetTemp = paramsMsg.targetTemp;
+        controlMsg.power = paramsMsg.power;
+        break;
       case DEFAULTS:
         setDefaultParams();
         break;
@@ -106,5 +109,6 @@ void loop() {
 
     xQueueSend(displayQ, &controlMsg, portMAX_DELAY);
     xQueueSend(heatersQ, &controlMsg, portMAX_DELAY);
+    xQueueSend(httpQ, &controlMsg, portMAX_DELAY);
   }
 }

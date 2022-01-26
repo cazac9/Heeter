@@ -19,7 +19,6 @@ void getCurrentSettings(){
   String response;
   serializeJson(doc, response);
   server.send(200, "application/json", response);
-
 }
 
 void postSettings(){
@@ -30,6 +29,9 @@ void postSettings(){
   JsonObject object = doc.as<JsonObject>();
   msg.power = object["power"];
   msg.targetTemp = object["target"];
+  msg.command = TT_POWER_SET;
+  xQueueSend(input, &msg, portMAX_DELAY);
+
   server.send(200);
 }
 
@@ -37,7 +39,7 @@ void HttpApiManageger::runTask(void *pvParam){
   QueueHandle_t* queues = (QueueHandle_t *) pvParam;
   input = queues[0];
   http = queues[1];
-  //free(pvParam);
+  free(pvParam);
 
   while (WiFi.status() != WL_CONNECTED) {
     vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -49,5 +51,5 @@ void HttpApiManageger::runTask(void *pvParam){
   while (true){
     server.handleClient();
     xQueueReceive(http, &msg, portMAX_DELAY);
-  }
+   }
 }

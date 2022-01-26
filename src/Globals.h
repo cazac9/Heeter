@@ -11,6 +11,7 @@ enum Command : uint8_t {
   CT_SET,
   TT_SET,
   POWER_UP,
+  TT_POWER_SET,
   DEFAULTS
 };
 #endif
