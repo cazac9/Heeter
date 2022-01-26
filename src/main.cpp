@@ -69,7 +69,10 @@ void setup() {
   heatersQ = createQueue("heaters");
   httpQ = createQueue("http");
 
-  QueueHandle_t queues[] = {inputQ, httpQ};
+  //QueueHandle_t queues[] = {inputQ, httpQ};
+  QueueHandle_t* queues = (QueueHandle_t*)malloc(sizeof(QueueHandle_t*)*2);
+  queues[0] = inputQ;
+  queues[1] = httpQ;
   createTask(DisplayManager::runTask, "display", displayQ, &display, 10 * 1024);
   createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);

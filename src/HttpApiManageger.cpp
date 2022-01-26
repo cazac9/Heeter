@@ -47,6 +47,6 @@ void HttpApiManageger::runTask(void *pvParam){
   server.begin();
   while (true){
     server.handleClient();
-    //xQueueReceive(http, &msg, portMAX_DELAY);
+    xQueueReceive(http, &msg, portMAX_DELAY);
   }
 }
