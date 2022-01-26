@@ -34,9 +34,10 @@ void postSettings(){
 }
 
 void HttpApiManageger::runTask(void *pvParam){
-  QueueHandle_t * queues = (QueueHandle_t *) pvParam;
+  QueueHandle_t* queues = (QueueHandle_t *) pvParam;
   input = queues[0];
   http = queues[1];
+  //free(pvParam);
 
   while (WiFi.status() != WL_CONNECTED) {
     vTaskDelay(1000 / portTICK_PERIOD_MS);
