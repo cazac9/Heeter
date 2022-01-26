@@ -2,8 +2,8 @@
 #include <WifiMonitor.h>
 #include <esp_sntp.h>
 #include <time.h>
-#include <TelnetStream.h>
 #include <credentials.h>
+#include <Globals.h>
 
 
 void configureTime(){
@@ -28,14 +28,14 @@ void WifiMonitor::runTask(void *pvParam){
     Serial.print(".");
   }
 
-  Serial.println("connected to wifi");
+  logger("connected to wifi");
   configureTime();
   
-  Serial.println(WiFi.localIP());
+  logger(WiFi.localIP().toString());
 
   TelnetStream.begin();
   
-  Serial.println("started wifi task done");
+  logger("started wifi task done");
   digitalWrite(LED_BUILTIN, HIGH);
   while (true)
   {
@@ -46,7 +46,7 @@ void WifiMonitor::runTask(void *pvParam){
         ESP.restart();
         break;
       case 'C':
-        TelnetStream.println("bye bye");
+        logger("bye bye");
         TelnetStream.stop();
         break;
     }

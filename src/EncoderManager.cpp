@@ -14,7 +14,7 @@ void setPowerCallback(Button2& btn){
   unsigned int time = btn.wasPressedFor();
   if (time < 1000)
   {
-    Serial.println("Pressed set power");
+    logger("Pressed set power");
     params.command = POWER_UP;
     xQueueSend(encoderQ, &params, portMAX_DELAY);
   }
@@ -24,14 +24,14 @@ void setDefaultParamsCallback(Button2& btn){
   unsigned int time = btn.wasPressedFor();
   if (time > 1000)
   {
-    Serial.println("Pressed set default params");
+    logger("Pressed set default params");
     params.command = DEFAULTS;
     xQueueSend(encoderQ, &params, portMAX_DELAY);
   }
 }
 
 void manageTemperatureChange(ESPRotary& r) {
-  Serial.println("Changed target temperature value");
+  logger("Changed target temperature value");
   params.command = TT_SET;
   params.targetTemp = r.getPosition();
   xQueueSend(encoderQ, &params, portMAX_DELAY);

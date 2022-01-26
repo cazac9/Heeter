@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
 #include<Arduino.h>
+#include <TelnetStream.h>
 
 #define MAX_POWER  3
 #define MIN_POWER  1
@@ -14,4 +15,8 @@ enum Command : uint8_t {
   TT_POWER_SET,
   DEFAULTS
 };
+
+void logger(const char * message);
+void logger(String message);
+
 #endif

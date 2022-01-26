@@ -6,7 +6,7 @@ void DisplayManager::runTask(void *pvParam){
   Wire.begin(22, 23);
   Adafruit_SSD1306 display(128, 64, &Wire, 64);
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println("SSD1306 allocation failed");
+    logger("SSD1306 allocation failed");
     for(;;);
   }
   display.display();
