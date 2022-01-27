@@ -3,9 +3,11 @@
 #include <messaging/ParamsMessage.h>
 
 void DisplayManager::runTask(void *pvParam){
-  Wire.begin(22, 23);
+  #define SDA 21
+  #define SCL 23
+  Wire.begin(SDA, SCL);
   Adafruit_SSD1306 display(128, 64, &Wire, 64);
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, 200000U)) {
     logger("SSD1306 allocation failed");
     for(;;);
   }
