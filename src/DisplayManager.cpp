@@ -4,7 +4,7 @@
 
 void DisplayManager::runTask(void *pvParam){
   #define SDA 21
-  #define SCL 23
+  #define SCL 22
   Wire.begin(SDA, SCL);
   Adafruit_SSD1306 display(128, 64, &Wire, 64);
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, 200000U)) {
