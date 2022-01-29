@@ -1,6 +1,5 @@
 #include <DisplayManager.h>
 #include <Adafruit_SSD1306.h>
-
 #include <messaging/ParamsMessage.h>
 
 void DisplayManager::runTask(void *pvParam){
@@ -29,7 +28,7 @@ void DisplayManager::runTask(void *pvParam){
         display.print(&timeinfo, "%H:%M:%S");
       }
       display.display();
-      delay(2000);
+      delay(900);
     }
     logger("out of mesage");
   }
