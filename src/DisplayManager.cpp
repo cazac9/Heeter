@@ -4,13 +4,11 @@
 #include <messaging/ParamsMessage.h>
 
 void DisplayManager::runTask(void *pvParam){
-  Adafruit_SSD1306 display(128, 64, &Wire, 64);
+  Adafruit_SSD1306 display(128, 64, &Wire);
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     logger("SSD1306 allocation failed");
     for(;;);
   }
-  display.display();
-  delay(2000);
   display.clearDisplay();
   display.stopscroll();
   display.setTextSize(2);             
@@ -21,7 +19,6 @@ void DisplayManager::runTask(void *pvParam){
   {
     if (xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE)
     {
-      logger("got message");
       display.clearDisplay();
       display.setCursor(0,0);
       display.printf("Current %i\n", msg.currentTemp);
@@ -32,6 +29,7 @@ void DisplayManager::runTask(void *pvParam){
         display.print(&timeinfo, "%H:%M:%S");
       }
       display.display();
+      delay(2000);
     }
     logger("out of mesage");
   }
