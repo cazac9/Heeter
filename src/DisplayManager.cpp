@@ -5,7 +5,7 @@
 void DisplayManager::runTask(void *pvParam){
   Adafruit_SSD1306 display(128, 64, &Wire);
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    logger("SSD1306 allocation failed");
+    Serial.println("SSD1306 allocation failed");
     for(;;);
   }
   display.clearDisplay();
@@ -28,7 +28,7 @@ void DisplayManager::runTask(void *pvParam){
         display.print(&timeinfo, "%H:%M:%S");
       }
       display.display();
-      delay(10);
+      vTaskDelay(10 / portTICK_PERIOD_MS);
     }
   }
 }

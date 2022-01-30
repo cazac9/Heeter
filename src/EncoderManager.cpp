@@ -18,12 +18,12 @@ void EncoderManager::runTask(void *pvParam){
   Button2 b;
 
   b.begin(14);
-  r.begin(12, 13, 4, MIN_POS, MAX_POS, START_POS, 3);
+  r.begin(12, 13, 1, MIN_POS, MAX_POS, START_POS, 2);
   b.setTapHandler([](Button2& btn){
     unsigned int time = btn.wasPressedFor();
     if (time < 1000)
     {
-      logger("Pressed set power");
+      Serial.println("Pressed set power");
       params.command = POWER_UP;
       xQueueSend(encoderQ, &params, portMAX_DELAY);
     }
@@ -33,16 +33,18 @@ void EncoderManager::runTask(void *pvParam){
     unsigned int time = btn.wasPressedFor();
     if (time > 1000)
     {
-      logger("Pressed set default params");
+      Serial.println("Pressed set default params");
       params.command = DEFAULTS;
       xQueueSend(encoderQ, &params, portMAX_DELAY);
     }
   });
 
   r.setChangedHandler([](ESPRotary& r) {
-    logger("Changed target temperature value");
+    int value = r.getPosition();
+    Serial.println("Changed target temperature value:");
+    Serial.println(value);
     params.command = TT_SET;
-    params.targetTemp = r.getPosition();
+    params.targetTemp = value;
     xQueueSend(encoderQ, &params, portMAX_DELAY);
   });
 

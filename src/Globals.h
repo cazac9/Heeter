@@ -15,8 +15,4 @@ enum Command : uint8_t {
   TT_POWER_SET,
   DEFAULTS
 };
-
-void logger(const char * message);
-void logger(String message);
-
 #endif
