@@ -28,14 +28,11 @@ void WifiMonitor::runTask(void *pvParam){
     Serial.print(".");
   }
 
-  Serial.println("connected to wifi");
-  configureTime();
-  
+  Serial.println("\nconnected to wifi");
   Serial.println(WiFi.localIP().toString());
-  Serial.println("started wifi task done");
+  
   digitalWrite(LED_BUILTIN, HIGH);
-  while (true)
-  {
-    
-  }
+
+  configureTime();
+  vTaskDelete(NULL);
 }
