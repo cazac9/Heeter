@@ -4,7 +4,7 @@
 #include <Globals.h>
 
 void TermocoupleManager::runTask(void *pvParam){
-  MAX6675 thermocouple(32, 33, 25);
+  MAX6675 thermocouple(SCK, SS, MISO);
   ParamsMessage params;
   while (true)
   {
