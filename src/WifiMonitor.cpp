@@ -32,23 +32,10 @@ void WifiMonitor::runTask(void *pvParam){
   configureTime();
   
   Serial.println(WiFi.localIP().toString());
-
-  TelnetStream.begin();
-  
   Serial.println("started wifi task done");
   digitalWrite(LED_BUILTIN, HIGH);
   while (true)
   {
-    switch (TelnetStream.read()) {
-      case 'R':
-        TelnetStream.stop();
-        delay(100);
-        ESP.restart();
-        break;
-      case 'C':
-        Serial.println("bye bye");
-        TelnetStream.stop();
-        break;
-    }
+    
   }
 }
