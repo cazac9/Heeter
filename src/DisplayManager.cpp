@@ -28,8 +28,7 @@ void DisplayManager::runTask(void *pvParam){
         display.print(&timeinfo, "%H:%M:%S");
       }
       display.display();
-      delay(900);
+      delay(10);
     }
-    logger("out of mesage");
   }
 }
