@@ -57,7 +57,7 @@ QueueHandle_t createQueue(const char * name){
 }
 
 void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, TaskHandle_t handle, int stack = 1024){
-  if(xTaskCreate(task, name, stack, q, 1, &handle) != pdPASS)
+  if(xTaskCreatePinnedToCore(task, name, stack, q, 1, &handle, CONFIG_ARDUINO_RUNNING_CORE) != pdPASS)
     halt("Erorr creating %s task", name);
 }
 
