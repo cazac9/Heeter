@@ -3,9 +3,9 @@
 #include <Globals.h>
 
 #define WAIT_3MINS 180000
-#define PIN_4KWT  5
-#define PIN_8KWT  18
-#define PIN_12KWT  19
+#define PIN_4KWT  32
+#define PIN_8KWT  33
+#define PIN_12KWT  25
 byte powerPins[3] = {PIN_4KWT, PIN_8KWT, PIN_12KWT};
 
 void HeaterManager::runTask(void *pvParam){
