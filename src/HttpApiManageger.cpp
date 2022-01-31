@@ -5,6 +5,7 @@
 #include <AsyncJson.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
+#include <AsyncElegantOTA.h>
 
 ParamsMessage msg;
 AsyncWebServer server(80);
@@ -41,6 +42,7 @@ void HttpApiManageger::runTask(void *pvParam){
     request->send(200);
   });
 
+  AsyncElegantOTA.begin(&server); 
   server.addHandler(handler);
   server.begin();
 

@@ -12,7 +12,7 @@
 // check if water is moving
 // android app
 // introduce schedule 
-// ota
+// test ota
 // encoder is working weird
 
 QueueHandle_t displayQ;
