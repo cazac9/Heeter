@@ -2,7 +2,6 @@
 #include <WifiMonitor.h>
 #include <esp_sntp.h>
 #include <time.h>
-#include <credentials.h>
 #include <Globals.h>
 
 
@@ -19,7 +18,7 @@ void configureTime(){
 
 void WifiMonitor::runTask(void *pvParam){
   WiFi.mode(WIFI_STA);
-  WiFi.begin(SSID, PASSWORD);
+  WiFi.begin(WIFI_SSID, PASSWORD);
   WiFi.setAutoReconnect(true);
   pinMode(LED_BUILTIN, OUTPUT);
   while (WiFi.status() != WL_CONNECTED)

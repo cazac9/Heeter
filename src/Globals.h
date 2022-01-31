@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
 #include <Arduino.h>
+#include <credentials.h>
 
 #define MAX_POWER  3
 #define MIN_POWER  1

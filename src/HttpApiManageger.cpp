@@ -42,7 +42,7 @@ void HttpApiManageger::runTask(void *pvParam){
     request->send(200);
   });
 
-  AsyncElegantOTA.begin(&server); 
+  AsyncElegantOTA.begin(&server, OTA_USER, PASSWORD); 
   server.addHandler(handler);
   server.begin();
 

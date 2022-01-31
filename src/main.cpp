@@ -7,12 +7,12 @@
 #include <WifiMonitor.h>
 #include <HttpApiManageger.h>
 
+
 //todo:
 // do something with innertion
 // check if water is moving
 // android app
 // introduce schedule 
-// test ota
 // encoder is working weird
 
 QueueHandle_t displayQ;
