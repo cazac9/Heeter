@@ -8,6 +8,7 @@ class ParamsMessage {
     uint8_t currentTemp;
     uint8_t targetTemp;
     uint8_t power;
+    float flow;
     String dateTime;
     Command command;
     ParamsMessage(){};

@@ -11,7 +11,7 @@ volatile byte pulseCount;
 void WaterFlowManager::runTask(void *pvParam){
   pinMode(SENSOR, INPUT_PULLUP);
 
- 
+  ParamsMessage params;
   long currentMillis;
   long previousMillis = 0;
   byte pulse1Sec = 0;
@@ -27,12 +27,11 @@ void WaterFlowManager::runTask(void *pvParam){
       pulse1Sec = pulseCount;
       pulseCount = 0;
 
-      float flowRate = ((1000.0 / (millis() - previousMillis)) * pulse1Sec) / 4.5;
+      params.flow = ((1000.0 / (millis() - previousMillis)) * pulse1Sec) / 4.5;
       previousMillis = millis();
+      params.command = FLOW;
       
-      Serial.print("Flow rate: ");
-      Serial.print(int(flowRate));
-      Serial.println("L/min");
+      xQueueOverwrite((QueueHandle_t)pvParam, &params);
     }
   }
 }

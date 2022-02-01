@@ -7,12 +7,15 @@
 #define MAX_POWER  3
 #define MIN_POWER  1
 #define DEFAULT_TEMP 40
+#define MIN_WATER_FLOW  20
 
 enum Command : uint8_t { 
   CT_SET,
   TT_SET,
   POWER_UP,
   TT_POWER_SET,
+  FLOW,
+  OFF,
   DEFAULTS
 };
 #endif
