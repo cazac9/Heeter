@@ -1,6 +1,6 @@
 #include <messaging/ParamsMessage.h>
 #include <Globals.h>
-#include <HttpApiManageger.h>
+#include <HttpApiManager.h>
 #include <AsyncTCP.h>
 #include <AsyncJson.h>
 #include <ESPAsyncWebServer.h>
@@ -10,7 +10,7 @@
 ParamsMessage msg;
 AsyncWebServer server(80);
 
-void HttpApiManageger::runTask(void *pvParam){
+void HttpApiManager::runTask(void *pvParam){
   QueueHandle_t* queues = (QueueHandle_t *) pvParam;
   QueueHandle_t input = queues[0];
   QueueHandle_t http = queues[1];

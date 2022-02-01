@@ -5,8 +5,8 @@
 #include <EncoderManager.h>
 #include <Globals.h>
 #include <WifiMonitor.h>
-#include <HttpApiManageger.h>
-
+#include <HttpApiManager.h>
+#include <WaterFlowManager.h>
 
 //todo:
 // do something with innertion
@@ -20,27 +20,12 @@ QueueHandle_t heatersQ;
 QueueHandle_t inputQ;
 QueueHandle_t httpQ;
 
-TaskHandle_t display;
-TaskHandle_t termocouple;
-TaskHandle_t heaters;
-TaskHandle_t encoder;
-TaskHandle_t wifi;
-TaskHandle_t httpApi;
-
 ParamsMessage controlMsg;
 
 void halt(const char *msg, const char *param){
   Serial.printf(msg, param);
   Serial.flush();
   esp_deep_sleep_start();
-}
-
-uint8_t calculatePower(){
-  uint8_t power = controlMsg.power + 1;
-  if(power > MAX_POWER)
-    power = MIN_POWER;
-  
-  return power;
 }
 
 void setDefaultParams(){
@@ -62,6 +47,14 @@ void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, TaskHan
 }
 
 void setup() {
+  TaskHandle_t display;
+  TaskHandle_t termocouple;
+  TaskHandle_t heaters;
+  TaskHandle_t encoder;
+  TaskHandle_t wifi;
+  TaskHandle_t httpApi;
+  TaskHandle_t waterflow;
+
   Serial.begin (115200);
 
   inputQ = createQueue("input");
@@ -76,7 +69,8 @@ void setup() {
   createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
   createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
   createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
-  createTask(HttpApiManageger::runTask, "server", queues, &httpApi, 10 * 1024);
+  createTask(WaterFlowManager::runTask, "waterflow", inputQ, &waterflow);
+  createTask(HttpApiManager::runTask, "server", queues, &httpApi, 10 * 1024);
   createTask(WifiMonitor::runTask, "monitor", NULL, &wifi, 10 * 1024);
 
   setDefaultParams();
@@ -94,8 +88,13 @@ void loop() {
         controlMsg.targetTemp = paramsMsg.targetTemp;
         break;
       case POWER_UP:
-        controlMsg.power = calculatePower();
-        break;
+        {
+          uint8_t power = controlMsg.power + 1;
+          if(power > MAX_POWER)
+            power = MIN_POWER;
+          controlMsg.power = power;
+          break;
+        }
       case TT_POWER_SET:
         controlMsg.targetTemp = paramsMsg.targetTemp;
         controlMsg.power = paramsMsg.power;
