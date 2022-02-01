@@ -37,7 +37,7 @@ void HttpApiManageger::runTask(void *pvParam){
     msg.power = object["power"];
     msg.targetTemp = object["target"];
     msg.command = TT_POWER_SET;
-    xQueueSend(input, &msg, portMAX_DELAY);
+    xQueueOverwrite(input, &msg);
 
     request->send(200);
   });

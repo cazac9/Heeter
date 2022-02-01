@@ -2,7 +2,7 @@
 #include <HeaterManager.h>
 #include <Globals.h>
 
-#define WAIT_3MINS 180000
+#define WAIT_3MINS 3 * 60 * 1000
 #define PIN_4KWT  32
 #define PIN_8KWT  33
 #define PIN_12KWT  25

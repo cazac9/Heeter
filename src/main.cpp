@@ -49,7 +49,7 @@ void setDefaultParams(){
 }
 
 QueueHandle_t createQueue(const char * name){
-  QueueHandle_t queue = xQueueCreate(32, sizeof(ParamsMessage));
+  QueueHandle_t queue = xQueueCreate(1, sizeof(ParamsMessage));
   if(!queue) 
     halt("Error creating %s queue", name);
 
@@ -107,8 +107,8 @@ void loop() {
         break;
     }
 
-    xQueueSend(displayQ, &controlMsg, portMAX_DELAY);
-    xQueueSend(heatersQ, &controlMsg, portMAX_DELAY);
-    xQueueSend(httpQ, &controlMsg, portMAX_DELAY);
+    xQueueOverwrite(displayQ, &controlMsg);
+    xQueueOverwrite(heatersQ, &controlMsg);
+    xQueueOverwrite(httpQ, &controlMsg);
   }
 }

@@ -25,7 +25,7 @@ void EncoderManager::runTask(void *pvParam){
     {
       Serial.println("Pressed set power");
       params.command = POWER_UP;
-      xQueueSend(encoderQ, &params, portMAX_DELAY);
+      xQueueOverwrite(encoderQ, &params);
     }
   });
 
@@ -35,7 +35,7 @@ void EncoderManager::runTask(void *pvParam){
     {
       Serial.println("Pressed set default params");
       params.command = DEFAULTS;
-      xQueueSend(encoderQ, &params, portMAX_DELAY);
+      xQueueOverwrite(encoderQ, &params);
     }
   });
 
@@ -45,7 +45,7 @@ void EncoderManager::runTask(void *pvParam){
     Serial.println(value);
     params.command = TT_SET;
     params.targetTemp = value;
-    xQueueSend(encoderQ, &params, portMAX_DELAY);
+    xQueueOverwrite(encoderQ, &params);
   });
 
   while (true)
