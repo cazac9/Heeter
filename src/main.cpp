@@ -15,7 +15,6 @@
 // android app
 // introduce schedule 
 // encoder is working weird
-// switch on/off
 
 QueueHandle_t displayQ;
 QueueHandle_t heatersQ;
