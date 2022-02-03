@@ -26,6 +26,7 @@ void HttpApiManager::runTask(void *pvParam){
     obj["target"] = msg.targetTemp;
     obj["current"] = msg.currentTemp;
     obj["power"] = msg.power;
+    obj["isOn"] = msg.isOn;
 
     String response;
     serializeJson(doc, response);
