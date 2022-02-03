@@ -6,9 +6,9 @@
 #define PIN_4KWT  32
 #define PIN_8KWT  33
 #define PIN_12KWT  25
-byte powerPins[3] = {PIN_4KWT, PIN_8KWT, PIN_12KWT};
 
 void HeaterManager::runTask(void *pvParam){
+  byte powerPins[3] = {PIN_4KWT, PIN_8KWT, PIN_12KWT};
   ParamsMessage msg;
   for (byte i = 0; i < MAX_POWER; i++){
     pinMode(powerPins[i], OUTPUT);
