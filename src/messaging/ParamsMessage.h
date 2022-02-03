@@ -9,7 +9,7 @@ class ParamsMessage {
     uint8_t targetTemp;
     uint8_t power;
     uint8_t flow;
-    bool isOn;
+    uint8_t isOn;
     Command command;
     ParamsMessage(){};
 };

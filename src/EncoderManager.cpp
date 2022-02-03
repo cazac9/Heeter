@@ -14,7 +14,6 @@ ParamsMessage params;
 
 void EncoderManager::runTask(void *pvParam){
   encoderQ = (QueueHandle_t)pvParam;
-
   ESPRotary r;
   Button2 b;
 
@@ -46,20 +45,20 @@ void EncoderManager::runTask(void *pvParam){
 
   r.setChangedHandler([](ESPRotary& r) {
     params.command = PARAMS;
-    params.isOn = true;
+    params.isOn = 1;
     params.targetTemp = (uint8_t)r.getPosition();
     xQueueOverwrite(encoderQ, &params);
 
-    EEPROM.writeBool(CONFIG_IS_ON_BYTE, true);
+    EEPROM.writeByte(CONFIG_IS_ON_BYTE, 1);
     EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, params.targetTemp);
     EEPROM.commit();
   });
 
   r.setLowerOverflowHandler([](ESPRotary& r) {
-    EEPROM.writeBool(CONFIG_IS_ON_BYTE, false);
+    EEPROM.writeByte(CONFIG_IS_ON_BYTE, 2);
     EEPROM.commit();
 
-    params.isOn = false;
+    params.isOn = 2;
     xQueueOverwrite(encoderQ, &params);
   });
 

@@ -43,7 +43,7 @@ void HttpApiManager::runTask(void *pvParam){
 
     EEPROM.writeByte(CONFIG_POWER_BYTE, msg.power);
     EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, msg.targetTemp);
-    EEPROM.writeBool(CONFIG_IS_ON_BYTE, msg.isOn);
+    EEPROM.writeByte(CONFIG_IS_ON_BYTE, msg.isOn);
     EEPROM.commit();
 
     request->send(200);

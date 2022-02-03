@@ -23,14 +23,14 @@ void DisplayManager::runTask(void *pvParam){
         errorCode = "E_WTR_FLW";
       }
 
-      if (!msg.isOn){
+      if (msg.isOn != 1){
         errorCode = "POWER_OFF";
       }
 
       display.clearDisplay();
       display.setCursor(0,0);
       display.printf("C:%i  T:%i\n", msg.currentTemp, msg.targetTemp);
-      display.printf("P: %i  F: %i\n", msg.power, msg.flow);
+      display.printf("P: %i  F:%i\n", msg.power, msg.flow);
       display.printf("%s\n", errorCode);
       struct tm timeinfo;
       if(getLocalTime(&timeinfo)){
