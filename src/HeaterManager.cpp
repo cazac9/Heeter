@@ -23,7 +23,7 @@ void HeaterManager::runTask(void *pvParam){
   while (true)
   {
     if(xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE){
-      if (msg.flow <= MIN_WATER_FLOW)
+      if (msg.flow <= MIN_WATER_FLOW || !msg.isOn)
       {
         switchOff(powerPins);
         continue;

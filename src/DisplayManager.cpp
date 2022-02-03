@@ -23,6 +23,10 @@ void DisplayManager::runTask(void *pvParam){
         errorCode = "E_WTR_FLW";
       }
 
+      if (!msg.isOn){
+        errorCode = "POWER_OFF";
+      }
+
       display.clearDisplay();
       display.setCursor(0,0);
       display.printf("C:%i  T:%i\n", msg.currentTemp, msg.targetTemp);
