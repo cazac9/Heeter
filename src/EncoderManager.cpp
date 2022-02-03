@@ -24,7 +24,6 @@ void EncoderManager::runTask(void *pvParam){
     unsigned int time = btn.wasPressedFor();
     if (time < 1000)
     {
-      Serial.println("Pressed set power");
       params.command = POWER_UP;
       xQueueOverwrite(encoderQ, &params);
     }
@@ -34,7 +33,6 @@ void EncoderManager::runTask(void *pvParam){
     unsigned int time = btn.wasPressedFor();
     if (time > 1000)
     {
-      Serial.println("Pressed set default params");
       params.command = PARAMS;
       params.targetTemp = DEFAULT_TEMP;
       params.power = DEFAULT_POWER;
@@ -47,16 +45,20 @@ void EncoderManager::runTask(void *pvParam){
   });
 
   r.setChangedHandler([](ESPRotary& r) {
-    int value = r.getPosition();
-    Serial.println("Changed target temperature value:");
-    Serial.println(value);
-
     params.command = PARAMS;
-    params.targetTemp = value;
+    params.targetTemp = (uint8_t)r.getPosition();
     xQueueOverwrite(encoderQ, &params);
 
-    EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, value);
+    EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, params.targetTemp);
     EEPROM.commit();
+  });
+
+  r.setLowerOverflowHandler([](ESPRotary& r) {
+    EEPROM.writeBool(CONFIG_IS_ON_BYTE, 0);
+    EEPROM.commit();
+
+    params.isOn = false;
+    xQueueOverwrite(encoderQ, &params);
   });
 
   while (true)
