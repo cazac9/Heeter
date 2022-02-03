@@ -31,7 +31,7 @@ void DisplayManager::runTask(void *pvParam){
       display.setCursor(0,0);
       display.printf("C:%i  T:%i\n", msg.currentTemp, msg.targetTemp);
       display.printf("P: %i  F: %i\n", msg.power, msg.flow);
-      display.printf("%s", errorCode);
+      display.printf("%s\n", errorCode);
       struct tm timeinfo;
       if(getLocalTime(&timeinfo)){
         display.print(&timeinfo, "%H:%M:%S");

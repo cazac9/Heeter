@@ -9,7 +9,6 @@
 #include <WaterFlowManager.h>
 #include <EEPROM.h>
 
-#define EEPROM_SIZE 3
 //todo:
 // do something with innertion
 // android app
@@ -94,7 +93,7 @@ void loop() {
             power = MIN_POWER;
           controlMsg.power = power;
 
-          EEPROM.writeByte(CONFIG_POWER_BYTE, DEFAULT_POWER);
+          EEPROM.writeByte(CONFIG_POWER_BYTE, power);
           EEPROM.commit();
           break;
         }
