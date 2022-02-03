@@ -7,6 +7,12 @@
 #define PIN_8KWT  33
 #define PIN_12KWT  25
 
+
+void switchOff(byte powerPins[]){
+  for (byte i = 0; i < MAX_POWER; i++)
+    digitalWrite(powerPins[i], LOW);
+}
+
 void HeaterManager::runTask(void *pvParam){
   byte powerPins[3] = {PIN_4KWT, PIN_8KWT, PIN_12KWT};
   ParamsMessage msg;
@@ -17,13 +23,17 @@ void HeaterManager::runTask(void *pvParam){
   while (true)
   {
     if(xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE){
+      if (msg.flow <= MIN_WATER_FLOW)
+      {
+        switchOff(powerPins);
+        continue;
+      }
+
       if (msg.currentTemp < msg.targetTemp){
         for (byte i = 0; i < MAX_POWER; i++)
           digitalWrite(powerPins[i], i < msg.power ? HIGH : LOW);
       } else {
-        for (byte i = 0; i < MAX_POWER; i++)
-          digitalWrite(powerPins[i], LOW);
-
+        switchOff(powerPins);
         vTaskDelay(WAIT_3MINS / portTICK_PERIOD_MS);
       }
     }

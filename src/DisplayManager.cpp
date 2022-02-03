@@ -18,11 +18,16 @@ void DisplayManager::runTask(void *pvParam){
   {
     if (xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE)
     {
+      String errorCode= "";
+      if (msg.flow <= MIN_WATER_FLOW){
+        errorCode = "E_WTR_FLW";
+      }
+
       display.clearDisplay();
       display.setCursor(0,0);
-      display.printf("Current %i\n", msg.currentTemp);
-      display.printf("Target  %i\n", msg.targetTemp);
-      display.printf("Power   %i\n", msg.power);
+      display.printf("C:%i  T:%i\n", msg.currentTemp, msg.targetTemp);
+      display.printf("P: %i  F: %i\n", msg.power, msg.flow);
+      display.printf("%s", errorCode);
       struct tm timeinfo;
       if(getLocalTime(&timeinfo)){
         display.print(&timeinfo, "%H:%M:%S");

@@ -99,6 +99,9 @@ void loop() {
         controlMsg.targetTemp = paramsMsg.targetTemp;
         controlMsg.power = paramsMsg.power;
         break;
+      case FLOW: 
+        controlMsg.flow = paramsMsg.flow;
+        break;
       case DEFAULTS:
         setDefaultParams();
         break;
