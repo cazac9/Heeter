@@ -18,7 +18,7 @@ void DisplayManager::runTask(void *pvParam){
   {
     if (xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE)
     {
-      String errorCode= "";
+      const char * errorCode= "";
       if (msg.flow <= MIN_WATER_FLOW){
         errorCode = "E_WTR_FLW";
       }

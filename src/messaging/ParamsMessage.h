@@ -8,7 +8,7 @@ class ParamsMessage {
     uint8_t currentTemp;
     uint8_t targetTemp;
     uint8_t power;
-    float flow;
+    uint8_t flow;
     Command command;
     ParamsMessage(){};
 };

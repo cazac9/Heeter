@@ -27,7 +27,7 @@ void WaterFlowManager::runTask(void *pvParam){
       pulse1Sec = pulseCount;
       pulseCount = 0;
 
-      params.flow = ((1000.0 / (millis() - previousMillis)) * pulse1Sec) / 4.5;
+      params.flow = (uint8_t)(((1000.0 / (millis() - previousMillis)) * pulse1Sec) / 4.5);
       previousMillis = millis();
       params.command = PARAMS;
       
