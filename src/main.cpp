@@ -69,7 +69,7 @@ void setup() {
   createTask(HttpApiManager::runTask, "server", queues, &httpApi, 10 * 1024);
   createTask(WifiMonitor::runTask, "monitor", NULL, &wifi, 10 * 1024);
 
-  controlMsg.isOn = EEPROM.readBool(CONFIG_IS_ON_BYTE);
+  controlMsg.isOn = EEPROM.readByte(CONFIG_IS_ON_BYTE);
   controlMsg.targetTemp = EEPROM.readByte(CONFIG_TEMPERATURE_BYTE);
   controlMsg.power = EEPROM.readByte(CONFIG_POWER_BYTE);
 }
@@ -84,7 +84,7 @@ void loop() {
         controlMsg.targetTemp = paramsMsg.targetTemp == 0 ? controlMsg.targetTemp : paramsMsg.targetTemp;
         controlMsg.power = paramsMsg.power == 0 ? controlMsg.power : paramsMsg.power;
         controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
-        controlMsg.isOn = paramsMsg.isOn;
+        controlMsg.isOn = paramsMsg.isOn == 0 ? controlMsg.isOn : paramsMsg.isOn;
         break;
       case POWER_UP:
         {
