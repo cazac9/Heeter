@@ -1,7 +1,6 @@
 #include <messaging/ParamsMessage.h>
 #include <Globals.h>
 #include <HttpApiManager.h>
-#include <AsyncTCP.h>
 #include <AsyncJson.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
