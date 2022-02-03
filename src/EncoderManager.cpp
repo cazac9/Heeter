@@ -2,6 +2,7 @@
 #include <Button2.h> 
 #include <EncoderManager.h>
 #include <Globals.h>
+#include <EEPROM.h>
 #include <messaging/ParamsMessage.h>
 
 QueueHandle_t encoderQ;
@@ -34,8 +35,14 @@ void EncoderManager::runTask(void *pvParam){
     if (time > 1000)
     {
       Serial.println("Pressed set default params");
-      params.command = DEFAULTS;
+      params.command = PARAMS;
+      params.targetTemp = DEFAULT_TEMP;
+      params.power = DEFAULT_POWER;
       xQueueOverwrite(encoderQ, &params);
+
+      EEPROM.writeByte(CONFIG_POWER_BYTE, DEFAULT_POWER);
+      EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, DEFAULT_TEMP);
+      EEPROM.commit();
     }
   });
 
@@ -43,9 +50,13 @@ void EncoderManager::runTask(void *pvParam){
     int value = r.getPosition();
     Serial.println("Changed target temperature value:");
     Serial.println(value);
+
     params.command = PARAMS;
     params.targetTemp = value;
     xQueueOverwrite(encoderQ, &params);
+
+    EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, value);
+    EEPROM.commit();
   });
 
   while (true)

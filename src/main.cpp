@@ -7,13 +7,15 @@
 #include <WifiMonitor.h>
 #include <HttpApiManager.h>
 #include <WaterFlowManager.h>
+#include <EEPROM.h>
 
+#define EEPROM_SIZE 3
 //todo:
 // do something with innertion
 // android app
 // introduce schedule 
 // encoder is working weird
-// save configs to eeprom
+// switch on/off
 
 QueueHandle_t displayQ;
 QueueHandle_t heatersQ;
@@ -26,11 +28,6 @@ void halt(const char *msg, const char *param){
   Serial.printf(msg, param);
   Serial.flush();
   esp_deep_sleep_start();
-}
-
-void setDefaultParams(){
-  controlMsg.power = 2;
-  controlMsg.targetTemp = DEFAULT_TEMP;
 }
 
 QueueHandle_t createQueue(const char * name){
@@ -55,7 +52,8 @@ void setup() {
   TaskHandle_t httpApi;
   TaskHandle_t waterflow;
 
-  Serial.begin (115200);
+  Serial.begin(115200);
+  EEPROM.begin(EEPROM_SIZE);
 
   inputQ = createQueue("input");
   displayQ = createQueue("display");
@@ -73,7 +71,9 @@ void setup() {
   createTask(HttpApiManager::runTask, "server", queues, &httpApi, 10 * 1024);
   createTask(WifiMonitor::runTask, "monitor", NULL, &wifi, 10 * 1024);
 
-  setDefaultParams();
+  controlMsg.isOn = EEPROM.readBool(CONFIG_IS_ON_BYTE);
+  controlMsg.targetTemp = EEPROM.readByte(CONFIG_TEMPERATURE_BYTE);
+  controlMsg.power = EEPROM.readByte(CONFIG_POWER_BYTE);
 }
 
 void loop() {
@@ -93,11 +93,11 @@ void loop() {
           if(power > MAX_POWER)
             power = MIN_POWER;
           controlMsg.power = power;
+
+          EEPROM.writeByte(CONFIG_POWER_BYTE, DEFAULT_POWER);
+          EEPROM.commit();
           break;
         }
-      case DEFAULTS:
-        setDefaultParams();
-        break;
       default:
         break;
     }
