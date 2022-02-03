@@ -83,7 +83,7 @@ void loop() {
         controlMsg.currentTemp = paramsMsg.currentTemp == 0 ? controlMsg.currentTemp : paramsMsg.currentTemp;
         controlMsg.targetTemp = paramsMsg.targetTemp == 0 ? controlMsg.targetTemp : paramsMsg.targetTemp;
         controlMsg.power = paramsMsg.power == 0 ? controlMsg.power : paramsMsg.power;
-        controlMsg.flow = controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
+        controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
         controlMsg.isOn = paramsMsg.isOn;
         break;
       case POWER_UP:
