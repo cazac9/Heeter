@@ -10,10 +10,10 @@
 
 //todo:
 // do something with innertion
-// check if water is moving
 // android app
 // introduce schedule 
 // encoder is working weird
+// save configs to eeprom
 
 QueueHandle_t displayQ;
 QueueHandle_t heatersQ;
@@ -81,11 +81,11 @@ void loop() {
   if(xQueueReceive(inputQ, &paramsMsg, portMAX_DELAY) == pdTRUE){
     switch (paramsMsg.command)
     {
-      case CT_SET:
-        controlMsg.currentTemp = paramsMsg.currentTemp;
-        break;
-      case TT_SET:
-        controlMsg.targetTemp = paramsMsg.targetTemp;
+      case PARAMS:
+        controlMsg.currentTemp =  controlMsg.currentTemp = paramsMsg.currentTemp == 0 ? controlMsg.currentTemp : paramsMsg.currentTemp;
+        controlMsg.targetTemp = paramsMsg.targetTemp == 0 ? controlMsg.targetTemp : paramsMsg.targetTemp;
+        controlMsg.power = paramsMsg.power == 0 ? controlMsg.power : paramsMsg.power;
+        controlMsg.flow = controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
         break;
       case POWER_UP:
         {
@@ -95,13 +95,6 @@ void loop() {
           controlMsg.power = power;
           break;
         }
-      case TT_POWER_SET:
-        controlMsg.targetTemp = paramsMsg.targetTemp;
-        controlMsg.power = paramsMsg.power;
-        break;
-      case FLOW: 
-        controlMsg.flow = paramsMsg.flow;
-        break;
       case DEFAULTS:
         setDefaultParams();
         break;

@@ -9,7 +9,7 @@ void TermocoupleManager::runTask(void *pvParam){
   while (true)
   {
     params.currentTemp = (byte)thermocouple.readCelsius();
-    params.command = CT_SET;
+    params.command = PARAMS;
     xQueueOverwrite((QueueHandle_t)pvParam, &params);
     vTaskDelay(500 / portTICK_PERIOD_MS);
   }

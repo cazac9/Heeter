@@ -29,7 +29,7 @@ void WaterFlowManager::runTask(void *pvParam){
 
       params.flow = ((1000.0 / (millis() - previousMillis)) * pulse1Sec) / 4.5;
       previousMillis = millis();
-      params.command = FLOW;
+      params.command = PARAMS;
       
       xQueueOverwrite((QueueHandle_t)pvParam, &params);
     }

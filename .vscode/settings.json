@@ -1,6 +1,7 @@
 {
   "files.associations": {
     "encodermanagerh": "cpp",
-    "functional": "cpp"
+    "functional": "cpp",
+    "numeric": "cpp"
   }
 }

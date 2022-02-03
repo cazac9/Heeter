@@ -36,7 +36,7 @@ void HttpApiManager::runTask(void *pvParam){
     JsonObject object = json.as<JsonObject>();
     msg.power = object["power"];
     msg.targetTemp = object["target"];
-    msg.command = TT_POWER_SET;
+    msg.command = PARAMS;
     xQueueOverwrite(input, &msg);
 
     request->send(200);

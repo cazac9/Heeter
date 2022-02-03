@@ -43,7 +43,7 @@ void EncoderManager::runTask(void *pvParam){
     int value = r.getPosition();
     Serial.println("Changed target temperature value:");
     Serial.println(value);
-    params.command = TT_SET;
+    params.command = PARAMS;
     params.targetTemp = value;
     xQueueOverwrite(encoderQ, &params);
   });
