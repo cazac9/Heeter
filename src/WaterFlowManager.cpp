@@ -33,5 +33,7 @@ void WaterFlowManager::runTask(void *pvParam){
       
       xQueueOverwrite((QueueHandle_t)pvParam, &params);
     }
+
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
