@@ -36,8 +36,8 @@ QueueHandle_t createQueue(const char * name){
   return queue;
 }
 
-void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, TaskHandle_t handle, int stack = 1024){
-  if(xTaskCreatePinnedToCore(task, name, stack, q, 1, &handle, CONFIG_ARDUINO_RUNNING_CORE) != pdPASS)
+void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, TaskHandle_t handle, int stack = 1024, int core = CONFIG_ARDUINO_RUNNING_CORE){
+  if(xTaskCreatePinnedToCore(task, name, stack, q, 1, &handle, core) != pdPASS)
     halt("Erorr creating %s task", name);
 }
 
@@ -63,9 +63,9 @@ void setup() {
   queues[1] = httpQ;
   createTask(DisplayManager::runTask, "display", displayQ, &display, 10 * 1024);
   createTask(HeaterManager::runTask, "heaters", heatersQ, &heaters);
-  createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple);
-  createTask(EncoderManager::runTask, "encoder", inputQ, &encoder);
-  createTask(WaterFlowManager::runTask, "waterflow", inputQ, &waterflow);
+  createTask(TermocoupleManager::runTask, "termocouple", inputQ, &termocouple, 1024, 0);
+  createTask(EncoderManager::runTask, "encoder", inputQ, &encoder, 1024, 0);
+  createTask(WaterFlowManager::runTask, "waterflow", inputQ, &waterflow, 1024, 0);
   createTask(HttpApiManager::runTask, "server", queues, &httpApi, 10 * 1024);
   createTask(WifiMonitor::runTask, "monitor", NULL, &wifi, 10 * 1024);
 
