@@ -20,6 +20,7 @@ void WifiMonitor::runTask(void *pvParam){
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, PASSWORD);
   WiFi.setAutoReconnect(true);
+  WiFi.setHostname("heater");
   pinMode(LED_BUILTIN, OUTPUT);
   while (WiFi.status() != WL_CONNECTED)
   {

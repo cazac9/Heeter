@@ -5,6 +5,7 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include <AsyncElegantOTA.h>
+#include <SPIFFS.h>
 
 ParamsMessage msg;
 AsyncWebServer server(80);
@@ -42,6 +43,12 @@ void HttpApiManager::runTask(void *pvParam){
 
     request->send(200);
   });
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/index.html", "text/html",false);
+  });
+
+  server.serveStatic("/", SPIFFS, "/");
 
   AsyncElegantOTA.begin(&server, OTA_USER, PASSWORD); 
   server.addHandler(handler);
