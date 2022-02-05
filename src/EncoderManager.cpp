@@ -2,7 +2,6 @@
 #include <Button2.h> 
 #include <EncoderManager.h>
 #include <Globals.h>
-#include <EEPROM.h>
 #include <messaging/ParamsMessage.h>
 
 QueueHandle_t encoderQ;
@@ -36,10 +35,6 @@ void EncoderManager::runTask(void *pvParam){
       params.targetTemp = DEFAULT_TEMP;
       params.power = DEFAULT_POWER;
       xQueueOverwrite(encoderQ, &params);
-
-      EEPROM.writeByte(CONFIG_POWER_BYTE, DEFAULT_POWER);
-      EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, DEFAULT_TEMP);
-      EEPROM.commit();
     }
   });
 
@@ -48,16 +43,9 @@ void EncoderManager::runTask(void *pvParam){
     params.isOn = 1;
     params.targetTemp = (uint8_t)r.getPosition();
     xQueueOverwrite(encoderQ, &params);
-
-    EEPROM.writeByte(CONFIG_IS_ON_BYTE, 1);
-    EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, params.targetTemp);
-    EEPROM.commit();
   });
 
   r.setLowerOverflowHandler([](ESPRotary& r) {
-    EEPROM.writeByte(CONFIG_IS_ON_BYTE, 2);
-    EEPROM.commit();
-
     params.isOn = 2;
     xQueueOverwrite(encoderQ, &params);
   });

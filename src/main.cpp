@@ -72,6 +72,15 @@ void setup() {
   controlMsg.isOn = EEPROM.readByte(CONFIG_IS_ON_BYTE);
   controlMsg.targetTemp = EEPROM.readByte(CONFIG_TEMPERATURE_BYTE);
   controlMsg.power = EEPROM.readByte(CONFIG_POWER_BYTE);
+
+   Serial.printf("ReadConfig %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power);
+}
+
+void saveConfig(uint8_t receivedValue, uint8_t currentValue, uint8_t storage){
+  if (receivedValue != 0 && receivedValue != currentValue){
+    EEPROM.writeByte(storage, receivedValue);
+    Serial.printf("Saved %i %i %i\n", receivedValue, currentValue, storage);
+  }
 }
 
 void loop() {
@@ -80,11 +89,17 @@ void loop() {
     switch (paramsMsg.command)
     {
       case PARAMS:
+        saveConfig(paramsMsg.power, controlMsg.power, CONFIG_POWER_BYTE);
+        saveConfig(paramsMsg.targetTemp, controlMsg.targetTemp, CONFIG_TEMPERATURE_BYTE);
+        saveConfig(paramsMsg.isOn, controlMsg.isOn, CONFIG_IS_ON_BYTE);
+        EEPROM.commit();
+
         controlMsg.currentTemp = paramsMsg.currentTemp == 0 ? controlMsg.currentTemp : paramsMsg.currentTemp;
         controlMsg.targetTemp = paramsMsg.targetTemp == 0 ? controlMsg.targetTemp : paramsMsg.targetTemp;
         controlMsg.power = paramsMsg.power == 0 ? controlMsg.power : paramsMsg.power;
         controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
         controlMsg.isOn = paramsMsg.isOn == 0 ? controlMsg.isOn : paramsMsg.isOn;
+
         break;
       case POWER_UP:
         {
@@ -93,7 +108,7 @@ void loop() {
             power = MIN_POWER;
           controlMsg.power = power;
 
-          EEPROM.writeByte(CONFIG_POWER_BYTE, power);
+          saveConfig(power, power - 1, CONFIG_POWER_BYTE);
           EEPROM.commit();
           break;
         }

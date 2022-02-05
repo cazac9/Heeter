@@ -5,7 +5,6 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include <AsyncElegantOTA.h>
-#include <EEPROM.h>
 
 ParamsMessage msg;
 AsyncWebServer server(80);
@@ -40,11 +39,6 @@ void HttpApiManager::runTask(void *pvParam){
     msg.isOn = object["isOn"];
     msg.command = PARAMS;
     xQueueOverwrite(input, &msg);
-
-    EEPROM.writeByte(CONFIG_POWER_BYTE, msg.power);
-    EEPROM.writeByte(CONFIG_TEMPERATURE_BYTE, msg.targetTemp);
-    EEPROM.writeByte(CONFIG_IS_ON_BYTE, msg.isOn);
-    EEPROM.commit();
 
     request->send(200);
   });
