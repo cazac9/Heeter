@@ -49,7 +49,7 @@ void HttpApiManager::runTask(void *pvParam){
   });
 
   server.serveStatic("/", SPIFFS, "/");
-
+  SPIFFS.begin();
   AsyncElegantOTA.begin(&server, OTA_USER, PASSWORD); 
   server.addHandler(handler);
   server.begin();
