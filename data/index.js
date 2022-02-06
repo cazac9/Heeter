@@ -12,10 +12,12 @@ var days = {
 };
 var today = days[now.getDay()];
 
+server_get();
+
 //=================================================
 // DATA
 //=================================================
-
+var currentState;
 var visibleFlag = 1;
 var setpoint = 21;
 var unit ="&deg;C";
@@ -25,10 +27,8 @@ var doingsave = false;
 
 var thermostat = {
 	temperature: "21",
-	humidity: "50",
-	humidistat: 0,
 	relay1state: 0,
-	relay1name: "Zone Name",
+	relay1name: "Heater",
 	opmode: 0,
     state: 0,
     manualsetpoint: 21,
@@ -67,10 +67,10 @@ schedule['fri'] = JSON.parse(JSON.stringify(day1));
 schedule['sat'] = JSON.parse(JSON.stringify(day1));
 schedule['sun'] = JSON.parse(JSON.stringify(day1));
 
-schedule = server_get2("thermostat_schedule"); //all data * 100 to avoid floating point on the ESP8266 side
+schedule = currentState.schedule;
 for (var d in schedule) {
     for (var z in schedule[d]) {
-        schedule[d][z].s /= 100;
+        schedule[d][z].s /= 100;e4ddeq  
         schedule[d][z].e /= 100;
         schedule[d][z].sp /= 100;
     }
@@ -90,7 +90,7 @@ var slider_width = $(".slider").width();
 var slider_height = $(".slider").height();
 var changed = 0;
 
-thermostat = server_get2("state");
+thermostat = currentState.thermostat;
 thermostat.manualsetpoint/=100;
 		
 if(thermostat.humidistat) {
@@ -594,9 +594,9 @@ function save(param, payload) {
 	doingsave=true;
     $.ajax({
         type: 'POST',
-        url: "postSettings?param=" + param,
+        url: "postSettings",
         data: payload,
-		dataType: 'text',
+		dataType: 'json',
 		cache: false,
         async: true,
 			timeout: 3000,
@@ -628,7 +628,7 @@ function server_get() {
     var output = {};
 	if (visibleFlag) {
 		$.ajax({
-			url: "getCurentState?param=state",
+			url: "getCurentState",
 			dataType: 'json',
 			async: true,
 			timeout: 3000,
@@ -661,39 +661,5 @@ function server_get() {
 		}
 		});
 	}
-    return output;
-}
-
-function server_get2(param) {
-    var output = {};
-	if (visibleFlag) {
-		$.ajax({
-			url: "getCurentState?param=" + param,
-			dataType: 'json',
-			async: false,
-			timeout: 3000,
-			tryCount : 0,
-			retryLimit : 3,			
-			success: function (data) {
-				if (data.length !== 0) output = data;
-					statusMsg = false;
-					if(!connected) setStatus("Connected",2,0); 
-					connected=true;
-			},
-		error : function(xhr, textStatus, errorThrown ) {
-        if (textStatus == 'timeout') {
-            this.tryCount++;
-            if (this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }            
-            return;
-        }
-		if(connected) setStatus("No connection to server!",0,1);
-		connected=false;
-		}
-		});
-	}
-    return output;
+    currentState = output;
 }
