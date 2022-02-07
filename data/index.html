@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><title>Thermostat control</title>
+<html><head><title>Heater control</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="style.css">
@@ -8,7 +8,7 @@
 <div id="statusView" style=""></div>  
 <div class="block">
 	<button id="toggle" style="float:right">OFF</button>
-    <div class="zone-title">Zone name</div>
+    <div class="zone-title">Heater</div>
     <hr>
     <div style="text-align:center">
         <p>SET POINT:</p>
@@ -25,13 +25,12 @@
                 </td>
             </tr>
         </table>
-		<p>Temperature: <span class="zone-temperature"></span>
-		<span style="display:none" class="humidity">, Humidity: <span id="zone-humidity"></span></span></p>
+		<p>
+            Temperature: <span class="zone-temperature"></span><span class="power">, Power: <span id="zone-power"></span></span>
+        </p>
     </div>
-    <button id="manual_thermostat" class="btn-small btn-left thermostatmode">Manual</button>
-    <button id="scheduled_thermostat" class="btn-small btn-right thermostatmode">Schedule</button>
-    <button id="heating_thermostat" class="btn-small btn-left thermostatopmode" style="margin-left:10px" >Heating</button>
-    <button id="cooling_thermostat" class="btn-small btn-right thermostatopmode">Cooling</button>
+    <button id="manual_heater" class="btn-small btn-left heatermode">Manual</button>
+    <button id="scheduled_heater" class="btn-small btn-right heatermode">Schedule</button>
     <div style="font-size:28px">Schedule</div>
 	<div id="datetime"></div>
     <hr>
