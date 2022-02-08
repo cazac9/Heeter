@@ -65,8 +65,6 @@ heater.schedule['fri'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['sat'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['sun'] = JSON.parse(JSON.stringify(day1));
 
-var maxc = 24;
-var minc = 5;
 // ================================================
 // State variables
 // ================================================
@@ -418,7 +416,7 @@ $("#scheduled_heater").click(function () {
 });
 
 function color_map(temperature) {
-    var f = (temperature - minc) / (maxc - minc);
+    var f = (temperature - 5) / 19;
     var a = (1 - f);
     var Y = Math.floor(255 * a);
     r = 255;
