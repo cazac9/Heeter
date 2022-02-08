@@ -10,7 +10,9 @@ var days = {
     6: 'sat',
     7: 'sun'
 };
-var today = days[now.getDay()];
+
+var currentDay = now.getDay();
+var today = days[currentDay];
 
 //=================================================
 // DATA
@@ -36,34 +38,39 @@ var heater = {
 var day1 = [{
     s: 0,
     e: 6,
-    t: 8
+    t: 8,
+    p: 2
 }, {
     s: 6,
     e: 9,
-    t: 18
+    t: 18,
+    p: 2
 }, {
     s: 9,
     e: 17,
-    t: 12
+    t: 12,
+    p: 2
 }, {
     s: 17,
     e: 22,
-    t: 18
+    t: 18,
+    p: 2
 }, {
     s: 22,
     e: 24,
-    t: 8
+    t: 8,
+    p: 2
 }];
 
 server_get();
 
-heater.schedule['mon'] = JSON.parse(JSON.stringify(day1));
-heater.schedule['tue'] = JSON.parse(JSON.stringify(day1));
-heater.schedule['wed'] = JSON.parse(JSON.stringify(day1));
-heater.schedule['thu'] = JSON.parse(JSON.stringify(day1));
-heater.schedule['fri'] = JSON.parse(JSON.stringify(day1));
-heater.schedule['sat'] = JSON.parse(JSON.stringify(day1));
-heater.schedule['sun'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['0'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['1'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['2'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['3'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['4'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['5'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['6'] = JSON.parse(JSON.stringify(day1));
 
 // ================================================
 // State variables
@@ -71,7 +78,7 @@ heater.schedule['sun'] = JSON.parse(JSON.stringify(day1));
 var editmode = 'move';
 $("#mode-move").css("background-color", "#ff9600");
 var key = 1;
-var day = "mon";
+var day = "0";
 var mousedown = 0;
 var slider_width = $(".slider").width();
 var slider_height = $(".slider").height();
@@ -84,7 +91,8 @@ setInterval(updateclock, 1000);
 function updateclock() {
     now = new Date();
     timenow = now.getHours() + (now.getMinutes() / 60);
-    today = days[now.getDay()];
+    today = days[currentDay];
+   
 	
 	checkVisibility();
 
@@ -95,10 +103,10 @@ function updateclock() {
     }
 			
     var current_key = 0;
-    for (var z in heater.schedule[today]) {
-        if (heater.schedule[today][z].s <= timenow && heater.schedule[today][z].e > timenow) {
+    for (var z in heater.schedule[currentDay]) {
+        if (heater.schedule[currentDay][z].s <= timenow && heater.schedule[currentDay][z].e > timenow) {
             if (heater.isOnSchedule == 1) {
-                setpoint = heater.schedule[today][z].t * 1;
+                setpoint = heater.schedule[currentDay][z].t * 1;
                 $(".zone-setpoint").html(setpoint);
                 current_key = z;
             }
@@ -109,7 +117,7 @@ function updateclock() {
     var sx = $(".slider[day=" + today + "]")[0].offsetLeft;
     var y = $(".slider[day=" + today + "]")[0].offsetTop;
     var x1 = sx + slider_width * (timenow / 24.0);
-    var x2 = sx + slider_width * (heater.schedule[today][current_key].s / 24.0);
+    var x2 = sx + slider_width * (heater.schedule[currentDay][current_key].s / 24.0);
 
     x2 = sx;
     $("#timemarker").css('top', y + "px");
@@ -119,22 +127,22 @@ function updateclock() {
 }
 
 function setStatus(msg,dur,pri){	 // show msg on status bar
-		if(statusMsg == true){return};
-		statusMsg= true;
-		if(pri>0){
-			$("#statusView").toggleClass("statusViewAlert",true);
-			$("#statusView").toggleClass("statusView",false);
-		} else {
-			$("#statusView").toggleClass("statusView",true);
-			$("#statusView").toggleClass("statusViewAlert",false);
-		}
-		$("#statusView").show();
-		$("#statusView").html(msg);
-		dur = dur*1000;
-		if(dur >0){
-			setTimeout(function(){$("#statusView").hide(200);$("#statusView").html(""); statusMsg= false},dur)
-		}
-	}
+    if(statusMsg == true){return};
+    statusMsg= true;
+    if(pri>0){
+        $("#statusView").toggleClass("statusViewAlert",true);
+        $("#statusView").toggleClass("statusView",false);
+    } else {
+        $("#statusView").toggleClass("statusView",true);
+        $("#statusView").toggleClass("statusViewAlert",false);
+    }
+    $("#statusView").show();
+    $("#statusView").html(msg);
+    dur = dur*1000;
+    if(dur >0){
+        setTimeout(function(){$("#statusView").hide(200);$("#statusView").html(""); statusMsg= false},dur)
+    }
+}
 
 function update() {
 	$(".zone-temperature").html(heater.current + "&deg;C");
@@ -214,8 +222,8 @@ function draw_day_slider(day) {
         }
         key++;
     }
-    out += "<div class='slider-label'>" + day.toUpperCase() + "</div>";
-    $(".slider[day=" + day + "]").html(out);
+    out += "<div class='slider-label'>" + days[day].toUpperCase() + "</div>";
+    $(".slider[day=" + days[day] + "]").html(out);
 }
 $("#average_temperature").html(calc_average_schedule_temperature().toFixed(1));
 
@@ -502,9 +510,8 @@ function save() {
 	doingsave=true;
     $.ajax({
         type: 'POST',
-        url: "postSettings",
+        url: "http://localhost/postSettings",
         data: heater,
-		dataType: 'json',
 		cache: false,
         async: true,
         timeout: 3000,
@@ -536,7 +543,7 @@ function save() {
 function server_get() {
 	if (visibleFlag) {
 		$.ajax({
-			url: "getCurentState",
+			url: "http://localhost/getCurentState",
 			dataType: 'json',
 			async: true,
 			timeout: 3000,
