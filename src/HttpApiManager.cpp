@@ -27,6 +27,8 @@ void HttpApiManager::runTask(void *pvParam){
     obj["current"] = msg.currentTemp;
     obj["power"] = msg.power;
     obj["isOn"] = msg.isOn;
+    obj["isOnSchedule"] = msg.isOnSchedule;
+    obj["schedule"] = msg.scheduleRaw;
 
     String response;
     serializeJson(doc, response);
@@ -38,7 +40,12 @@ void HttpApiManager::runTask(void *pvParam){
     msg.power = object["power"];
     msg.targetTemp = object["target"];
     msg.isOn = object["isOn"];
+    msg.isOnSchedule = object["isOnSchedule"];
+    msg.scheduleRaw = object["schedule"];
     msg.command = PARAMS;
+
+    msg.parseSchedule(object["schedule"]);
+
     xQueueOverwrite(input, &msg);
 
     request->send(200);

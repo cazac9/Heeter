@@ -8,6 +8,7 @@
 #include <HttpApiManager.h>
 #include <WaterFlowManager.h>
 #include <EEPROM.h>
+#include <ArduinoJson.h>
 
 //todo:
 // do something with innertion
@@ -72,14 +73,44 @@ void setup() {
   controlMsg.isOn = EEPROM.readByte(CONFIG_IS_ON_BYTE);
   controlMsg.targetTemp = EEPROM.readByte(CONFIG_TEMPERATURE_BYTE);
   controlMsg.power = EEPROM.readByte(CONFIG_POWER_BYTE);
+  controlMsg.isOnSchedule = EEPROM.readByte(CONFIG_IS_ON_SCHEDULE_BYTE);
+  
+  DynamicJsonDocument doc(512);
+  deserializeJson(doc, EEPROM.readString(CONFIG_SCHEDULE_BYTE));
+  controlMsg.parseSchedule(doc);
 
-   Serial.printf("ReadConfig %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power);
+  Serial.printf("ReadConfig %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power);
 }
 
 void saveConfig(uint8_t receivedValue, uint8_t currentValue, uint8_t storage){
   if (receivedValue != 0 && receivedValue != currentValue){
     EEPROM.writeByte(storage, receivedValue);
     Serial.printf("Saved %i %i %i\n", receivedValue, currentValue, storage);
+  }
+}
+
+void manageSchedule(ParamsMessage target, ParamsMessage source){
+
+  bool isOnSchedule = source.isOnSchedule == 1
+     || (target.isOnSchedule == 1 && source.isOnSchedule != 2);
+  
+  std::map<uint8_t, ScheduleRange *> schedule = source.schedule;
+  if (schedule.size() == 0)
+    schedule = target.schedule;
+   
+  struct tm timeinfo;
+  if(isOnSchedule == 1 && schedule.size() > 0  && getLocalTime(&timeinfo)){
+    target.schedule = schedule;
+    const time_t timer = time(NULL);
+    ScheduleRange * daylySchedule  = schedule[timeinfo.tm_wday];
+    for (size_t i = 0; i < 10; i++)
+    {
+      if(timer >= daylySchedule[i].start && timer <= daylySchedule[i].end){
+        target.targetTemp = daylySchedule[i].targetTemp;
+        target.power = daylySchedule[i].power;
+        break;
+      }
+    }
   }
 }
 
@@ -92,13 +123,20 @@ void loop() {
         saveConfig(paramsMsg.power, controlMsg.power, CONFIG_POWER_BYTE);
         saveConfig(paramsMsg.targetTemp, controlMsg.targetTemp, CONFIG_TEMPERATURE_BYTE);
         saveConfig(paramsMsg.isOn, controlMsg.isOn, CONFIG_IS_ON_BYTE);
+        saveConfig(paramsMsg.isOn, controlMsg.isOn, CONFIG_IS_ON_SCHEDULE_BYTE);
+        if(strlen(paramsMsg.scheduleRaw) > 0)
+          EEPROM.writeString(CONFIG_IS_ON_SCHEDULE_BYTE, paramsMsg.scheduleRaw);
+          
         EEPROM.commit();
+
+        manageSchedule(controlMsg, paramsMsg);
 
         controlMsg.currentTemp = paramsMsg.currentTemp == 0 ? controlMsg.currentTemp : paramsMsg.currentTemp;
         controlMsg.targetTemp = paramsMsg.targetTemp == 0 ? controlMsg.targetTemp : paramsMsg.targetTemp;
         controlMsg.power = paramsMsg.power == 0 ? controlMsg.power : paramsMsg.power;
         controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
         controlMsg.isOn = paramsMsg.isOn == 0 ? controlMsg.isOn : paramsMsg.isOn;
+        controlMsg.isOnSchedule = paramsMsg.isOnSchedule == 0 ? controlMsg.isOnSchedule : paramsMsg.isOnSchedule;
 
         break;
       case POWER_UP:
