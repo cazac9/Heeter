@@ -4,11 +4,12 @@ body {
 }
 
 .zone-title {
-    font-size:42px
+    font-size:42px;
 }
 
 .zone-setpoint {
-    font-size:62px
+    font-size:62px;
+    color: #000;
 }
 
 .block { 
@@ -21,38 +22,6 @@ body {
 }
 
 #toggle {
-    font-size:22px;
-    color:#fff;
-    background-color:#555;
-    border-radius: 12px;
-    border:0;
-    padding:10px;
-    cursor:pointer;
-    text-decoration:none;
-}
-
-#relay1 {
-    font-size:22px;
-    color:#fff;
-    background-color:#555;
-    border-radius: 12px;
-    border:0;
-    padding:10px;
-    cursor:pointer;
-    text-decoration:none;
-}
-#relay2 {
-    font-size:22px;
-    color:#fff;
-    background-color:#555;
-    border-radius: 12px;
-    border:0;
-    padding:10px;
-    cursor:pointer;
-    text-decoration:none;
-}
-
-#relay3 {
     font-size:22px;
     color:#fff;
     background-color:#555;

@@ -16,7 +16,6 @@ var today = days[now.getDay()];
 // DATA
 //=================================================
 var visibleFlag = 1;
-var setpoint = 21;
 var unit ="&deg;C";
 var statusMsg = false;
 var connected = false;
@@ -25,15 +24,14 @@ var doingsave = false;
 
 
 var heater = {
-	temperature: "21",
+    power: 2,
+	temperature: 21,
 	relay1state: 0,
-	opmode: 0,
-    state: 0,
+    isOn: 2, // false
     target: 21,
+    schedule: {},
     isOnSchedule: 2 // false
 };
-
-var schedule = {};
 
 var day1 = [{
     s: 0,
@@ -59,22 +57,13 @@ var day1 = [{
 
 server_get();
 
-schedule['mon'] = JSON.parse(JSON.stringify(day1));
-schedule['tue'] = JSON.parse(JSON.stringify(day1));
-schedule['wed'] = JSON.parse(JSON.stringify(day1));
-schedule['thu'] = JSON.parse(JSON.stringify(day1));
-schedule['fri'] = JSON.parse(JSON.stringify(day1));
-schedule['sat'] = JSON.parse(JSON.stringify(day1));
-schedule['sun'] = JSON.parse(JSON.stringify(day1));
-
-// schedule = heater.schedule;
-// for (var d in schedule) {
-//     for (var z in schedule[d]) {
-//         schedule[d][z].s /= 100;e4ddeq  
-//         schedule[d][z].e /= 100;
-//         schedule[d][z].t /= 100;
-//     }
-// }
+heater.schedule['mon'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['tue'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['wed'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['thu'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['fri'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['sat'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['sun'] = JSON.parse(JSON.stringify(day1));
 
 var maxc = 24;
 var minc = 5;
@@ -90,10 +79,7 @@ var slider_width = $(".slider").width();
 var slider_height = $(".slider").height();
 var changed = 0;
 		
-$(".zone-setpoint").html(heater.target);
- 
-//update();
-//updateclock();
+
 setInterval(server_get, 5000);
 setInterval(updateclock, 1000);
 
@@ -111,10 +97,10 @@ function updateclock() {
     }
 			
     var current_key = 0;
-    for (var z in schedule[today]) {
-        if (schedule[today][z].s <= timenow && schedule[today][z].e > timenow) {
+    for (var z in heater.schedule[today]) {
+        if (heater.schedule[today][z].s <= timenow && heater.schedule[today][z].e > timenow) {
             if (heater.isOnSchedule == 1) {
-                setpoint = schedule[today][z].t * 1;
+                setpoint = heater.schedule[today][z].t * 1;
                 $(".zone-setpoint").html(setpoint);
                 current_key = z;
             }
@@ -125,7 +111,7 @@ function updateclock() {
     var sx = $(".slider[day=" + today + "]")[0].offsetLeft;
     var y = $(".slider[day=" + today + "]")[0].offsetTop;
     var x1 = sx + slider_width * (timenow / 24.0);
-    var x2 = sx + slider_width * (schedule[today][current_key].s / 24.0);
+    var x2 = sx + slider_width * (heater.schedule[today][current_key].s / 24.0);
 
     x2 = sx;
     $("#timemarker").css('top', y + "px");
@@ -156,12 +142,6 @@ function update() {
 	$(".zone-temperature").html(heater.current + "&deg;C");
     $("#zone-power").html(heater.power);
 	
-	if(heater.relay1state === 0) { //why?
-		$(".zone-setpoint").css("color", "#000000");
-	} else {
-		$(".zone-setpoint").css("color", "#f00000");
-	}
-	
 	if (heater.isOn === 1) {
 		$("#toggle").html("ON");
 		$("#toggle").css("background-color", "#ff9600");
@@ -182,18 +162,18 @@ function update() {
 }
 	
 $("#toggle").click(function () {
-    heater.state++;
-    if (heater.state > 1) heater.state = 0;
-    if (heater.state == 1) {
+    heater.isOn = (heater.isOn == 1 || heater.isOn == 0) ? 2 : 1;
+
+    if (heater.isOn == 1) {
         $("#toggle").html("ON");
         $(this).css("background-color", "#ff9600");
     }
-    if (heater.state === 0) {
+    if (heater.isOn === 2) {
         $("#toggle").html("OFF");
         $(this).css("background-color", "#555");
     }
 
-    save("heater_state", heater.state.toString());
+    save();
 });
 
 $("#zone-setpoint-dec").click(function () {
@@ -201,11 +181,9 @@ $("#zone-setpoint-dec").click(function () {
     $("#manual_heater").css("background-color", "#ff9600");
     heater.isOnSchedule = 2;
     heater.target -= 1;
-    setpoint = heater.target;
-    $(".zone-setpoint").html(setpoint + unit);
+    $(".zone-setpoint").html(heater.target + unit);
 
-    save("heater_mode", heater.isOnSchedule);
-    save("heater_manualsetpoint", heater.target);
+    save();
 });
 
 $("#zone-setpoint-inc").click(function () {
@@ -213,27 +191,25 @@ $("#zone-setpoint-inc").click(function () {
     $("#manual_heater").css("background-color", "#ff9600");
     heater.isOnSchedule = 2;
     heater.target += 1;
-    setpoint = heater.target;
-    $(".zone-setpoint").html(setpoint + unit);
+    $(".zone-setpoint").html(heater.target + unit);
 
-    save("heater_mode", heater.isOnSchedule);
-    save("heater_manualsetpoint", heater.target);
+    save();
 });
 
 // ============================================
 // SCHEDULER
 
-for (day in schedule) draw_day_slider(day);
+for (day in heater.schedule) draw_day_slider(day);
 
 function draw_day_slider(day) {
     var out = "";
     var key = 0;
-    for (var z in schedule[day]) {
-        var left = (schedule[day][z].s / 24.0) * 100;
-        var width = ((schedule[day][z].e - schedule[day][z].s) / 24.0) * 100;
-        var color = color_map(schedule[day][z].t);
+    for (var z in heater.schedule[day]) {
+        var left = (heater.schedule[day][z].s / 24.0) * 100;
+        var width = ((heater.schedule[day][z].e - heater.schedule[day][z].s) / 24.0) * 100;
+        var color = color_map(heater.schedule[day][z].t);
 
-        out += "<div class='slider-segment' style='left:" + left + "%; width:" + width + "%; background-color:" + color + "' key=" + key + " title='" + schedule[day][z].t + unit +"'></div>";
+        out += "<div class='slider-segment' style='left:" + left + "%; width:" + width + "%; background-color:" + color + "' key=" + key + " title='" + heater.schedule[day][z].t + unit +"'></div>";
 
         if (key > 0) {
             out += "<div class='slider-button' style='left:" + left + "%;' key=" + key + "></div>";
@@ -252,7 +228,7 @@ $("body").on("mousedown", ".slider-button", function (e) {
 $("body").mouseup(function (e) {
     mousedown = 0;
     if (changed) {
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(schedule[day])) + "}");
+        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
         changed = 0;
     }
 });
@@ -271,7 +247,7 @@ $("body").on("touchstart", ".slider-button", function (e) {
 $("body").on("touchend", ".slider-button", function (e) {
     mousedown = 0;
     if (changed) {
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(schedule[day])) + "}");
+        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
         changed = 0;
     }
 });
@@ -291,11 +267,11 @@ $("body").on("click", ".slider-button", function () {
     if (editmode == 'merge') {
         day = $(this).parent().attr("day");
         key = parseInt($(this).attr("key"),10);
-        schedule[day][key - 1].e = schedule[day][key].e;
-        schedule[day].splice(key, 1);
+        heater.schedule[day][key - 1].e = heater.schedule[day][key].e;
+        heater.schedule[day].splice(key, 1);
         draw_day_slider(day);
         //editmode = 'move';
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(schedule[day])) + "}");
+        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
     }
 });
 
@@ -310,25 +286,25 @@ $("body").on("click", ".slider-segment", function (e) {
         var hour = prc * 24.0;
         hour = Math.round(hour / 0.5) * 0.5;
 
-        if (hour > schedule[day][key].s + 0.5 && hour < schedule[day][key].e - 0.5) {
-            var end = parseFloat(schedule[day][key].e);
-            schedule[day][key].e = hour;
+        if (hour > heater.schedule[day][key].s + 0.5 && hour < heater.schedule[day][key].e - 0.5) {
+            var end = parseFloat(heater.schedule[day][key].e);
+            heater.schedule[day][key].e = hour;
 
-            schedule[day].splice(key + 1, 0, {
+            heater.schedule[day].splice(key + 1, 0, {
                 s: hour,
                 e: end,
-                sp: schedule[day][key].t
+                sp: heater.schedule[day][key].t
             });
 
             draw_day_slider(day);
             $("#average_temperature").html(calc_average_schedule_temperature().toFixed(1));
-            save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(schedule[day])) + "}");
+            save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
         }
         //editmode = 'move';
     } else if (editmode == 'move') {
-        $("#slider-segment-temperature").val((schedule[day][key].t * 1).toFixed(1));
-        $("#slider-segment-start").val(format_time(schedule[day][key].s));
-        $("#slider-segment-end").val(format_time(schedule[day][key].e));
+        $("#slider-segment-temperature").val((heater.schedule[day][key].t * 1).toFixed(1));
+        $("#slider-segment-start").val(format_time(heater.schedule[day][key].s));
+        $("#slider-segment-end").val(format_time(heater.schedule[day][key].e));
 
         $("#slider-segment-block").show();
         $("#slider-segment-block-movepos").hide();
@@ -346,13 +322,13 @@ function slider_update(e) {
         var hour = prc * 24.0;
         hour = Math.round(hour / 0.5) * 0.5;
 
-        if (hour > schedule[day][key - 1].s && hour < schedule[day][key].e) {
-            schedule[day][key - 1].e = hour;
-            schedule[day][key].s = hour;
+        if (hour > heater.schedule[day][key - 1].s && hour < heater.schedule[day][key].e) {
+            heater.schedule[day][key - 1].e = hour;
+            heater.schedule[day][key].s = hour;
             update_slider_ui(day, key);
             changed = 1;
         }
-        $("#slider-segment-time").val(format_time(schedule[day][key].s));
+        $("#slider-segment-time").val(format_time(heater.schedule[day][key].s));
     }
     // $("#average_temperature").html(calc_average_schedule_temperature().toFixed(1));
 
@@ -361,30 +337,30 @@ function slider_update(e) {
 
 $("body").on("click", "#slider-segment-ok", function () {
 
-    schedule[day][key].t = $("#slider-segment-temperature").val();
-    var color = color_map(schedule[day][key].t);
+    heater.schedule[day][key].t = $("#slider-segment-temperature").val();
+    var color = color_map(heater.schedule[day][key].t);
     $(".slider[day=" + day + "]").find(".slider-segment[key=" + key + "]").css("background-color", color);
 
     var time = decode_time($("#slider-segment-start").val());
-    if (time != -1 && key > 0 && key < schedule[day].length) {
-        if (time >= (schedule[day][key - 1].s + 0.5) && time <= (schedule[day][key].e - 0.5)) {
-            schedule[day][key - 1].e = time;
-            schedule[day][key].s = time;
+    if (time != -1 && key > 0 && key < heater.schedule[day].length) {
+        if (time >= (heater.schedule[day][key - 1].s + 0.5) && time <= (heater.schedule[day][key].e - 0.5)) {
+            heater.schedule[day][key - 1].e = time;
+            heater.schedule[day][key].s = time;
         }
     }
-    $("#slider-segment-start").val(format_time(schedule[day][key].s));
+    $("#slider-segment-start").val(format_time(heater.schedule[day][key].s));
     update_slider_ui(day, key);
 
     time = decode_time($("#slider-segment-end").val());
-    if (time != -1 && key > 0 && key < (schedule[day].length - 1)) {
-        if (time >= (schedule[day][key].s + 0.5) && time <= (schedule[day][key + 1].e - 0.5)) {
-            schedule[day][key].e = time;
-            schedule[day][key + 1].s = time;
+    if (time != -1 && key > 0 && key < (heater.schedule[day].length - 1)) {
+        if (time >= (heater.schedule[day][key].s + 0.5) && time <= (heater.schedule[day][key + 1].e - 0.5)) {
+            heater.schedule[day][key].e = time;
+            heater.schedule[day][key + 1].s = time;
         }
     }
-    $("#slider-segment-end").val(format_time(schedule[day][key].e));
+    $("#slider-segment-end").val(format_time(heater.schedule[day][key].e));
     update_slider_ui(day, key + 1);
-    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(schedule[day])) + "}");
+    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
     updateclock();
 
 });
@@ -393,14 +369,14 @@ $("#slider-segment-movepos-ok").click(function () {
 
     var time = decode_time($("#slider-segment-time").val());
     if (time != -1 && key > 0) {
-        if (time >= (schedule[day][key - 1].s + 0.5) && time <= (schedule[day][key].e - 0.5)) {
-            schedule[day][key - 1].e = time;
-            schedule[day][key].s = time;
+        if (time >= (heater.schedule[day][key - 1].s + 0.5) && time <= (heater.schedule[day][key].e - 0.5)) {
+            heater.schedule[day][key - 1].e = time;
+            heater.schedule[day][key].s = time;
         }
     }
-    $("#slider-segment-time").val(format_time(schedule[day][key].s));
+    $("#slider-segment-time").val(format_time(heater.schedule[day][key].s));
     update_slider_ui(day, key);
-    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(schedule[day])) + "}");
+    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
 });
 
 $("#mode-split").click(function () {
@@ -427,10 +403,9 @@ $("#manual_heater").click(function () {
     $(this).css("background-color", "#ff9600");
     heater.isOnSchedule = 2;
 	
-	setpoint = heater.target;
-	$(".zone-setpoint").html(setpoint.toFixed(1) + unit);
+	$(".zone-setpoint").html(heater.target + unit);
 
-    save("heater_mode", heater.isOnSchedule);
+    save();
     updateclock();
 });
 
@@ -438,23 +413,7 @@ $("#scheduled_heater").click(function () {
     $(".heatermode").css("background-color", "#555");
     $(this).css("background-color", "#ff9600");
     heater.isOnSchedule = 1;
-    save("heater_mode", heater.isOnSchedule);
-    updateclock();
-});
-
-$("#heating_heater").click(function () {
-    $(".heateropmode").css("background-color", "#555");
-    $(this).css("background-color", "#c00000");
-    opmode = 0;
-    save("heater_opmode", opmode.toString());
-    updateclock();
-});
-
-$("#cooling_heater").click(function () {
-    $(".heateropmode").css("background-color", "#555");
-    $(this).css("background-color", "#0000c0");
-    opmode = 1;
-    save("heater_opmode", opmode.toString());
+    save();
     updateclock();
 });
 
@@ -470,15 +429,15 @@ function color_map(temperature) {
 }
 
 function update_slider_ui(day, key) {
-    if (schedule[day] !== undefined && key < schedule[day].length) {
+    if (heater.schedule[day] !== undefined && key < heater.schedule[day].length) {
         var slider = $(".slider[day=" + day + "]");
         if (key > 0) {
-            var width = ((schedule[day][key - 1].e - schedule[day][key - 1].s) / 24.0) * 100;
+            var width = ((heater.schedule[day][key - 1].e - heater.schedule[day][key - 1].s) / 24.0) * 100;
             slider.find(".slider-segment[key=" + (key - 1) + "]").css("width", width + "%");
         }
 
-        var left = (schedule[day][key].s / 24.0) * 100;
-        var width = ((schedule[day][key].e - schedule[day][key].s) / 24.0) * 100;
+        var left = (heater.schedule[day][key].s / 24.0) * 100;
+        var width = ((heater.schedule[day][key].e - heater.schedule[day][key].s) / 24.0) * 100;
         slider.find(".slider-segment[key=" + key + "]").css("width", width + "%");
         slider.find(".slider-segment[key=" + key + "]").css("left", left + "%");
         slider.find(".slider-button[key=" + key + "]").css("left", left + "%");
@@ -510,10 +469,10 @@ function decode_time(timestring) {
 
 function calc_average_schedule_temperature() {
     var sum = 0;
-    for (var d in schedule) {
-        for (var z in schedule[d]) {
-            var hours = (schedule[d][z].e - schedule[d][z].s)
-            sum += (schedule[d][z].t * hours);
+    for (var d in heater.schedule) {
+        for (var z in heater.schedule[d]) {
+            var hours = (heater.schedule[d][z].e - heater.schedule[d][z].s)
+            sum += (heater.schedule[d][z].t * hours);
         }
     }
     return sum / (24 * 7.0);
@@ -541,18 +500,19 @@ function checkVisibility() {
     });
 }
 
-function save(param, payload) {
+function save() {
 	doingsave=true;
     $.ajax({
         type: 'POST',
         url: "postSettings",
-        data: payload,
+        data: heater,
 		dataType: 'json',
 		cache: false,
         async: true,
-			timeout: 3000,
-			tryCount : 0,
-			retryLimit : 3,			success: function (data) {
+        timeout: 3000,
+        tryCount : 0,
+        retryLimit : 3,			
+        success: function (data) {
 			statusMsg = false;
 			if(!connected) setStatus("Connected",2,0); 
 			connected=true;
