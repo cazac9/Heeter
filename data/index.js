@@ -99,7 +99,7 @@ function updateclock() {
     $("#datetime").html(today.toUpperCase() + " " + format_time(timenow));
 
     if (heater.isOnSchedule == 2) {
-        $(".zone-setpoint").html(heater.target);
+        $(".zone-setpoint").html(heater.target + unit);
     }
 			
     var current_key = 0;
@@ -107,7 +107,7 @@ function updateclock() {
         if (heater.schedule[currentDay][z].s <= timenow && heater.schedule[currentDay][z].e > timenow) {
             if (heater.isOnSchedule == 1) {
                 setpoint = heater.schedule[currentDay][z].t * 1;
-                $(".zone-setpoint").html(setpoint);
+                $(".zone-setpoint").html(setpoint + unit);
                 current_key = z;
             }
         }
