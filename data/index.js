@@ -29,8 +29,8 @@ var heater = {
 	relay1state: 0,
 	opmode: 0,
     state: 0,
-    manualsetpoint: 21,
-    mode: 0
+    target: 21,
+    isOnSchedule: 2 // false
 };
 
 var schedule = {};
@@ -106,14 +106,14 @@ function updateclock() {
 
     $("#datetime").html(today.toUpperCase() + " " + format_time(timenow));
 
-    if (heater.mode == 0) {
+    if (heater.isOnSchedule == 2) {
         $(".zone-setpoint").html(heater.target);
     }
 			
     var current_key = 0;
     for (var z in schedule[today]) {
         if (schedule[today][z].s <= timenow && schedule[today][z].e > timenow) {
-            if (heater.mode == 1) {
+            if (heater.isOnSchedule == 1) {
                 setpoint = schedule[today][z].t * 1;
                 $(".zone-setpoint").html(setpoint);
                 current_key = z;
@@ -170,7 +170,7 @@ function update() {
 		$("#toggle").css("background-color", "#555");
 	}
 	
-	if (heater.mode === 0) {
+	if (heater.isOnSchedule === 1) {
 		$(".heatermode").css("background-color", "#555");
 		$("#manual_heater").css("background-color", "#ff9600");
 		$("#scheduled_heater").css("background-color", "#555");
@@ -199,25 +199,25 @@ $("#toggle").click(function () {
 $("#zone-setpoint-dec").click(function () {
     $(".heatermode").css("background-color", "#555");
     $("#manual_heater").css("background-color", "#ff9600");
-    heater.mode = 0;
-    heater.manualsetpoint -= 0.5;
-    setpoint = heater.manualsetpoint;
-    $(".zone-setpoint").html(setpoint.toFixed(1) + unit);
+    heater.isOnSchedule = 2;
+    heater.target -= 1;
+    setpoint = heater.target;
+    $(".zone-setpoint").html(setpoint + unit);
 
-    save("heater_mode", heater.mode.toString());
-    save("heater_manualsetpoint", ((heater.manualsetpoint.toFixed(1)) * 100).toString());
+    save("heater_mode", heater.isOnSchedule);
+    save("heater_manualsetpoint", heater.target);
 });
 
 $("#zone-setpoint-inc").click(function () {
     $(".heatermode").css("background-color", "#555");
     $("#manual_heater").css("background-color", "#ff9600");
-    heater.mode = 0;
-    heater.manualsetpoint += 0.5;
-    setpoint = heater.manualsetpoint;
-    $(".zone-setpoint").html(setpoint.toFixed(1) + unit);
+    heater.isOnSchedule = 2;
+    heater.target += 1;
+    setpoint = heater.target;
+    $(".zone-setpoint").html(setpoint + unit);
 
-    save("heater_mode", (heater.mode).toString());
-    save("heater_manualsetpoint", ((heater.manualsetpoint.toFixed(1)) * 100).toString());
+    save("heater_mode", heater.isOnSchedule);
+    save("heater_manualsetpoint", heater.target);
 });
 
 // ============================================
@@ -425,20 +425,20 @@ $("#mode-merge").click(function () {
 $("#manual_heater").click(function () {
     $(".heatermode").css("background-color", "#555");
     $(this).css("background-color", "#ff9600");
-    heater.mode = 0;
+    heater.isOnSchedule = 2;
 	
-	setpoint = heater.manualsetpoint;
+	setpoint = heater.target;
 	$(".zone-setpoint").html(setpoint.toFixed(1) + unit);
 
-    save("heater_mode", (heater.mode).toString());
+    save("heater_mode", heater.isOnSchedule);
     updateclock();
 });
 
 $("#scheduled_heater").click(function () {
     $(".heatermode").css("background-color", "#555");
     $(this).css("background-color", "#ff9600");
-    heater.mode = 1;
-    save("heater_mode", (heater.mode).toString());
+    heater.isOnSchedule = 1;
+    save("heater_mode", heater.isOnSchedule);
     updateclock();
 });
 
@@ -459,23 +459,6 @@ $("#cooling_heater").click(function () {
 });
 
 function color_map(temperature) {
-    /*
-    // http://www.particleincell.com/blog/2014/colormap/
-    // rainbow short
-    var f=(temperature-minc)/(maxc-minc);	//invert and group
-	var a=(1-f)/0.25;	//invert and group
-	var X=Math.floor(a);	//this is the integer part
-	var Y=Math.floor(255*(a-X)); //fractional part from 0 to 255
-	switch(X)
-	{
-		case 0: r=255;g=Y;b=0;break;
-		case 1: r=255-Y;g=255;b=0;break;
-		case 2: r=0;g=255;b=Y;break;
-		case 3: r=0;g=255-Y;b=255;break;
-		case 4: r=0;g=0;b=255;break;
-	}
-     
-	*/
     var f = (temperature - minc) / (maxc - minc);
     var a = (1 - f);
     var Y = Math.floor(255 * a);
@@ -607,7 +590,6 @@ function server_get() {
                 connected=true;
                 if(!doingsave) {
                     heater=data;
-                    heater.manualsetpoint/=100;
                     update();
                     updateclock();
                 }
