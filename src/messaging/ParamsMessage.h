@@ -27,11 +27,11 @@ class ParamsMessage {
 
         for (size_t j = 0; j < jranges.size(); j++){
           JsonObject jrange = jranges[j].as<JsonObject>();
-          ScheduleRange range = ranges[j];
-          range.start = jrange["s"];
-          range.end = jrange["e"];
-          range.power = jrange["p"];
-          range.targetTemp = jrange["t"];
+          ranges[j].start = jrange["s"];
+          ranges[j].end = jrange["e"];
+          ranges[j].power = jrange["p"];
+          ranges[j].targetTemp = jrange["t"];
+
         }
         
         schedule.insert(std::make_pair(i, ranges));
