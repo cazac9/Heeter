@@ -245,7 +245,7 @@ $("body").on("mousedown", ".slider-button", function (e) {
 $("body").mouseup(function (e) {
     mousedown = 0;
     if (changed) {
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
+        save();
         changed = 0;
     }
 });
@@ -264,7 +264,7 @@ $("body").on("touchstart", ".slider-button", function (e) {
 $("body").on("touchend", ".slider-button", function (e) {
     mousedown = 0;
     if (changed) {
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
+        save();
         changed = 0;
     }
 });
@@ -288,7 +288,7 @@ $("body").on("click", ".slider-button", function () {
         heater.schedule[day].splice(key, 1);
         draw_day_slider(day);
         //editmode = 'move';
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
+        save();
     }
 });
 
@@ -314,7 +314,7 @@ $("body").on("click", ".slider-segment", function (e) {
             });
 
             draw_day_slider(day);
-            save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
+            save();
         }
         //editmode = 'move';
     } else if (editmode == 'move') {
@@ -373,7 +373,8 @@ $("body").on("click", "#slider-segment-ok", function () {
     }
     $("#slider-segment-end").val(format_time(heater.schedule[day][key].e));
     update_slider_ui(day, key + 1);
-    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
+
+    save();
     updateclock();
 
 });
@@ -389,7 +390,7 @@ $("#slider-segment-movepos-ok").click(function () {
     }
     $("#slider-segment-time").val(format_time(heater.schedule[day][key].s));
     update_slider_ui(day, key);
-    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
+    save();
 });
 
 $("#mode-split").click(function () {
