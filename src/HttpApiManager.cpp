@@ -35,20 +35,26 @@ void HttpApiManager::runTask(void *pvParam){
     request->send(200, "application/json", response);
   });
 
-  AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/postSettings", [input](AsyncWebServerRequest *request, JsonVariant &json) {
-    JsonObject object = json.as<JsonObject>();
+server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL, 
+[input](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+    Serial.println((const char*)data);
+    DynamicJsonDocument doc(512);
+    deserializeJson(doc, (const char*)data);
+    JsonObject object = doc.as<JsonObject>();
     msg.power = object["power"];
     msg.targetTemp = object["target"];
     msg.isOn = object["isOn"];
     msg.isOnSchedule = object["isOnSchedule"];
     msg.scheduleRaw = object["schedule"];
     msg.command = PARAMS;
-
+ 
+    Serial.println("parsing");
     msg.parseSchedule(object["schedule"]);
 
     xQueueOverwrite(input, &msg);
 
     request->send(200);
+   
   });
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -58,7 +64,6 @@ void HttpApiManager::runTask(void *pvParam){
   server.serveStatic("/", SPIFFS, "/");
   SPIFFS.begin();
   AsyncElegantOTA.begin(&server, OTA_USER, PASSWORD); 
-  server.addHandler(handler);
   server.begin();
 
 

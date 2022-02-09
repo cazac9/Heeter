@@ -497,8 +497,10 @@ function save() {
 	doingsave=true;
     $.ajax({
         type: 'POST',
-        url: "http://localhost/postSettings",
-        data: heater,
+        url: "/postSettings",
+        data: JSON.stringify(heater),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
 		cache: false,
         async: true,
         timeout: 3000,
@@ -530,7 +532,7 @@ function save() {
 function server_get() {
 	if (visibleFlag) {
 		$.ajax({
-			url: "http://localhost/getCurentState",
+			url: "/getCurentState",
 			dataType: 'json',
 			async: true,
 			timeout: 3000,
@@ -541,6 +543,9 @@ function server_get() {
                 if(!connected) setStatus("Connected",2,0); 
                 connected=true;
                 if(!doingsave) {
+                    if(!data.schedule){
+                        data.schedule =  heater.schedule;
+                    }
                     heater=data;
                     update();
                     updateclock();
