@@ -11,6 +11,17 @@ var days = {
     7: 'sun'
 };
 
+var daysNums = {
+    'sun': 0,
+    'mon': 1,
+    'tue': 2,
+    'wed': 3,
+    'thu': 4,
+    'fri': 5,
+    'sat': 6,
+    'sun': 7
+};
+
 var currentDay = now.getDay();
 var today = days[currentDay];
 
@@ -71,6 +82,7 @@ heater.schedule['3'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['4'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['5'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['6'] = JSON.parse(JSON.stringify(day1));
+heater.schedule['7'] = JSON.parse(JSON.stringify(day1));
 
 // ================================================
 // State variables
@@ -78,7 +90,7 @@ heater.schedule['6'] = JSON.parse(JSON.stringify(day1));
 var editmode = 'move';
 $("#mode-move").css("background-color", "#ff9600");
 var key = 1;
-var day = "0";
+var day = 0;
 var mousedown = 0;
 var slider_width = $(".slider").width();
 var slider_height = $(".slider").height();
@@ -241,7 +253,7 @@ $("body").mouseup(function (e) {
 
 $("body").on("mousemove", ".slider", function (e) {
     if (mousedown && editmode == 'move') {
-        day = $(this).attr('day');
+        day = daysNums[$(this).attr('day')];
         slider_update(e);
     }
 });
@@ -263,7 +275,7 @@ $("body").on("touchmove", ".slider", function (e) {
     var event = window.event;
     e.pageX = event.touches[0].pageX;
     if (mousedown && editmode == 'move') {
-        day = $(this).attr('day');
+        day = daysNums[$(this).attr('day')];
         slider_update(e);
     }
 });
@@ -271,7 +283,7 @@ $("body").on("touchmove", ".slider", function (e) {
 // MERGE
 $("body").on("click", ".slider-button", function () {
     if (editmode == 'merge') {
-        day = $(this).parent().attr("day");
+        day = daysNums[$(this).parent().attr("day")];
         key = parseInt($(this).attr("key"),10);
         heater.schedule[day][key - 1].e = heater.schedule[day][key].e;
         heater.schedule[day].splice(key, 1);
@@ -283,7 +295,7 @@ $("body").on("click", ".slider-button", function () {
 
 $("body").on("click", ".slider-segment", function (e) {
 
-    day = $(this).parent().attr("day");
+    day = daysNums[$(this).parent().attr("day")];
     key = parseInt($(this).attr("key"),10);
 
     if (editmode == 'split') {
@@ -322,7 +334,7 @@ function slider_update(e) {
     $("#slider-segment-block").hide();
 
     if (key !== undefined) {
-        var x = e.pageX - $(".slider[day=" + day + "]")[0].offsetLeft;
+        var x = e.pageX - $(".slider[day=" + days[day] + "]")[0].offsetLeft;
 
         var prc = x / slider_width;
         var hour = prc * 24.0;
@@ -345,7 +357,7 @@ $("body").on("click", "#slider-segment-ok", function () {
 
     heater.schedule[day][key].t = $("#slider-segment-temperature").val();
     var color = color_map(heater.schedule[day][key].t);
-    $(".slider[day=" + day + "]").find(".slider-segment[key=" + key + "]").css("background-color", color);
+    $(".slider[day=" + days[day] + "]").find(".slider-segment[key=" + key + "]").css("background-color", color);
 
     var time = decode_time($("#slider-segment-start").val());
     if (time != -1 && key > 0 && key < heater.schedule[day].length) {
@@ -436,7 +448,7 @@ function color_map(temperature) {
 
 function update_slider_ui(day, key) {
     if (heater.schedule[day] !== undefined && key < heater.schedule[day].length) {
-        var slider = $(".slider[day=" + day + "]");
+        var slider = $(".slider[day=" + days[day] + "]");
         if (key > 0) {
             var width = ((heater.schedule[day][key - 1].e - heater.schedule[day][key - 1].s) / 24.0) * 100;
             slider.find(".slider-segment[key=" + (key - 1) + "]").css("width", width + "%");
