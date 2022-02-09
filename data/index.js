@@ -237,7 +237,6 @@ function draw_day_slider(day) {
     out += "<div class='slider-label'>" + days[day].toUpperCase() + "</div>";
     $(".slider[day=" + days[day] + "]").html(out);
 }
-$("#average_temperature").html(calc_average_schedule_temperature().toFixed(1));
 
 $("body").on("mousedown", ".slider-button", function (e) {
     mousedown = 1;
@@ -315,7 +314,6 @@ $("body").on("click", ".slider-segment", function (e) {
             });
 
             draw_day_slider(day);
-            $("#average_temperature").html(calc_average_schedule_temperature().toFixed(1));
             save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
         }
         //editmode = 'move';
@@ -348,9 +346,6 @@ function slider_update(e) {
         }
         $("#slider-segment-time").val(format_time(heater.schedule[day][key].s));
     }
-    // $("#average_temperature").html(calc_average_schedule_temperature().toFixed(1));
-
-
 }
 
 $("body").on("click", "#slider-segment-ok", function () {
@@ -483,17 +478,6 @@ function decode_time(timestring) {
         }
     }
     return time;
-}
-
-function calc_average_schedule_temperature() {
-    var sum = 0;
-    for (var d in heater.schedule) {
-        for (var z in heater.schedule[d]) {
-            var hours = (heater.schedule[d][z].e - heater.schedule[d][z].s)
-            sum += (heater.schedule[d][z].t * hours);
-        }
-    }
-    return sum / (24 * 7.0);
 }
 
 // function for checking if the page is visible or not
