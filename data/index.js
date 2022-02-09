@@ -246,7 +246,7 @@ $("body").on("mousedown", ".slider-button", function (e) {
 $("body").mouseup(function (e) {
     mousedown = 0;
     if (changed) {
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
+        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
         changed = 0;
     }
 });
@@ -265,7 +265,7 @@ $("body").on("touchstart", ".slider-button", function (e) {
 $("body").on("touchend", ".slider-button", function (e) {
     mousedown = 0;
     if (changed) {
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
+        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
         changed = 0;
     }
 });
@@ -289,7 +289,7 @@ $("body").on("click", ".slider-button", function () {
         heater.schedule[day].splice(key, 1);
         draw_day_slider(day);
         //editmode = 'move';
-        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
+        save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
     }
 });
 
@@ -316,7 +316,7 @@ $("body").on("click", ".slider-segment", function (e) {
 
             draw_day_slider(day);
             $("#average_temperature").html(calc_average_schedule_temperature().toFixed(1));
-            save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
+            save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
         }
         //editmode = 'move';
     } else if (editmode == 'move') {
@@ -378,7 +378,7 @@ $("body").on("click", "#slider-segment-ok", function () {
     }
     $("#slider-segment-end").val(format_time(heater.schedule[day][key].e));
     update_slider_ui(day, key + 1);
-    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
+    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
     updateclock();
 
 });
@@ -394,7 +394,7 @@ $("#slider-segment-movepos-ok").click(function () {
     }
     $("#slider-segment-time").val(format_time(heater.schedule[day][key].s));
     update_slider_ui(day, key);
-    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(calc_schedule_esp(heater.schedule[day])) + "}");
+    save("heater_schedule", "{\"" + day + "\":" + JSON.stringify(heater.schedule[day]) + "}");
 });
 
 $("#mode-split").click(function () {
@@ -494,16 +494,6 @@ function calc_average_schedule_temperature() {
         }
     }
     return sum / (24 * 7.0);
-}
-
-function calc_schedule_esp(sched) {
-    var fixsched = JSON.parse(JSON.stringify(sched));
-    for (var d in fixsched) {
-        fixsched[d].s *= 100;
-        fixsched[d].e *= 100;
-        fixsched[d].t *= 100;
-    }
-    return fixsched;
 }
 
 // function for checking if the page is visible or not
