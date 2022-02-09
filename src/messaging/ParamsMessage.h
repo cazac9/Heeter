@@ -3,6 +3,7 @@
 
 #include <Globals.h>
 #include <map>
+#include <ArduinoJson.h>
 
 class ParamsMessage {
   public:
@@ -40,20 +41,7 @@ class ParamsMessage {
     
 };
 
-enum Command : uint8_t { 
-  POWER_UP,
-  PARAMS
-};
 
-class ScheduleRange{
-  public:
-    time_t  start;
-    time_t  end;
-    uint8_t power;
-    uint8_t targetTemp;
-
-    ScheduleRange(){};
-};
 
 
 #endif

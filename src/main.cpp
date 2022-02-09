@@ -90,7 +90,6 @@ void saveConfig(uint8_t receivedValue, uint8_t currentValue, uint8_t storage){
 }
 
 void manageSchedule(ParamsMessage target, ParamsMessage source){
-
   bool isOnSchedule = source.isOnSchedule == 1
      || (target.isOnSchedule == 1 && source.isOnSchedule != 2);
   
