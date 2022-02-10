@@ -48,7 +48,6 @@ server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL
     msg.scheduleRaw = object["schedule"];
     msg.command = PARAMS;
  
-    Serial.println("parsing");
     msg.parseSchedule(object["schedule"]);
 
     xQueueOverwrite(input, &msg);

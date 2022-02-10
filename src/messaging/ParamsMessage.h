@@ -3,6 +3,8 @@
 
 #include <Globals.h>
 #include <map>
+#include <sstream>
+#include <string>
 #include <ArduinoJson.h>
 
 class ParamsMessage {
@@ -19,21 +21,20 @@ class ParamsMessage {
 
     ParamsMessage(){};
 
-    void parseSchedule(DynamicJsonDocument doc){
-      JsonArray days = doc.as<JsonArray>();
-      for (size_t i = 0; i < 7; i++){
-        JsonArray jranges = days[i].as<JsonArray>();
+    void parseSchedule(JsonObject days){
+      for (uint8_t i = 0; i < 7; i++){
+        std::ostringstream s;
+        s << i; 
+        JsonArray jranges = days[s.str()].as<JsonArray>();
         ScheduleRange * ranges = (ScheduleRange*)malloc(sizeof(ScheduleRange) * jranges.size());
-
         for (size_t j = 0; j < jranges.size(); j++){
           JsonObject jrange = jranges[j].as<JsonObject>();
           ranges[j].start = jrange["s"];
           ranges[j].end = jrange["e"];
           ranges[j].power = jrange["p"];
           ranges[j].targetTemp = jrange["t"];
-
         }
-        
+        Serial.println("insert");
         schedule.insert(std::make_pair(i, ranges));
       }
     };
