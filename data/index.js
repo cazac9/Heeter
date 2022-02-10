@@ -38,7 +38,7 @@ var doingsave = false;
 
 var heater = {
     power: 2,
-	temperature: 21,
+	current: 21,
 	relay1state: 0,
     isOn: 2, // false
     target: 21,
@@ -543,9 +543,7 @@ function server_get() {
                 if(!connected) setStatus("Connected",2,0); 
                 connected=true;
                 if(!doingsave) {
-                    if(!data.schedule){
-                        data.schedule =  heater.schedule;
-                    }
+                    if(!data.schedule) data.schedule =  heater.schedule;
                     heater=data;
                     update();
                     updateclock();
