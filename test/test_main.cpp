@@ -1,13 +1,9 @@
-#include <Arduino.h>
+#include <ArduinoFake.h>
 #include <unity.h>
 #include <messaging/ParamsMessage.h>
 #include <HttpApiManager.h>
 #include <Globals.h>
 #include <ArduinoJson.h>
-
-void setup() {
-    UNITY_BEGIN();   
-}
 
 void test_json_parsing(void){
   ParamsMessage msg;
@@ -27,9 +23,11 @@ void test_json_parsing(void){
   TEST_ASSERT_EQUAL(5, msg.schedule.size());
 }
 
-void loop() {
+int main()
+{
+  UNITY_BEGIN();   
 
-  ParamsMessage msg;
   RUN_TEST(test_json_parsing);
+
   UNITY_END();
 }
