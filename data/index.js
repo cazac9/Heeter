@@ -112,14 +112,16 @@ function updateclock() {
 
     if (heater.isOnSchedule == 2) {
         $(".zone-setpoint").html(heater.target + unit);
+        $(".zone-setpoint-power").html(heater.power);
     }
 			
     var current_key = 0;
     for (var z in heater.schedule[currentDay]) {
         if (heater.schedule[currentDay][z].s <= timenow && heater.schedule[currentDay][z].e > timenow) {
             if (heater.isOnSchedule == 1) {
-                setpoint = heater.schedule[currentDay][z].t * 1;
-                $(".zone-setpoint").html(setpoint + unit);
+                schedule = heater.schedule[currentDay][z];
+                $(".zone-setpoint").html(schedule.t + unit);
+                $(".zone-setpoint-power").html(schedule.p);
                 current_key = z;
             }
         }
@@ -198,8 +200,22 @@ $("#zone-setpoint-dec").click(function () {
     $(".heatermode").css("background-color", "#555");
     $("#manual_heater").css("background-color", "#ff9600");
     heater.isOnSchedule = 2;
-    heater.target -= 1;
+    heater.target -= 2;
+    if(heater.target < 20)
+        heater.target = 80;
     $(".zone-setpoint").html(heater.target + unit);
+
+    save();
+});
+
+$("#zone-setpoint-dec-power").click(function () {
+    $(".heatermode").css("background-color", "#555");
+    $("#manual_heater").css("background-color", "#ff9600");
+    heater.isOnSchedule = 2;
+    heater.power -= 1;
+    if(heater.power < 1)
+        heater.power = 3;
+    $(".zone-setpoint-power").html(heater.power);
 
     save();
 });
@@ -208,8 +224,22 @@ $("#zone-setpoint-inc").click(function () {
     $(".heatermode").css("background-color", "#555");
     $("#manual_heater").css("background-color", "#ff9600");
     heater.isOnSchedule = 2;
-    heater.target += 1;
+    heater.target += 2;
+    if(heater.target > 80)
+        heater.target = 20;
     $(".zone-setpoint").html(heater.target + unit);
+
+    save();
+});
+
+$("#zone-setpoint-inc-power").click(function () {
+    $(".heatermode").css("background-color", "#555");
+    $("#manual_heater").css("background-color", "#ff9600");
+    heater.isOnSchedule = 2;
+    heater.power += 1;
+    if(heater.power > 3)
+        heater.power = 1;
+    $(".zone-setpoint-power").html(heater.power);
 
     save();
 });
