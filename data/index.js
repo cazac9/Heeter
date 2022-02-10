@@ -1,28 +1,26 @@
 var now = new Date();
 var timenow = now.getHours() + (now.getMinutes() / 60);
 var days = {
-    0: 'sun',
-    1: 'mon',
-    2: 'tue',
-    3: 'wed',
-    4: 'thu',
-    5: 'fri',
-    6: 'sat',
-    7: 'sun'
+    0: 'mon',
+    1: 'tue',
+    2: 'wed',
+    3: 'thu',
+    4: 'fri',
+    5: 'sat',
+    6: 'sun'
 };
 
 var daysNums = {
-    'sun': 0,
-    'mon': 1,
-    'tue': 2,
-    'wed': 3,
-    'thu': 4,
-    'fri': 5,
-    'sat': 6,
-    'sun': 7
+    'mon': 0,
+    'tue': 1,
+    'wed': 2,
+    'thu': 3,
+    'fri': 4,
+    'sat': 5,
+    'sun': 6
 };
 
-var currentDay = now.getDay();
+var currentDay = now.getDay() - 1;
 var today = days[currentDay];
 
 //=================================================
@@ -82,7 +80,6 @@ heater.schedule['3'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['4'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['5'] = JSON.parse(JSON.stringify(day1));
 heater.schedule['6'] = JSON.parse(JSON.stringify(day1));
-heater.schedule['7'] = JSON.parse(JSON.stringify(day1));
 
 // ================================================
 // State variables
