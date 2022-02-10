@@ -107,7 +107,7 @@ function updateclock() {
 
     $("#datetime").html(today.toUpperCase() + " " + format_time(timenow));
 
-    if (heater.isOnSchedule == 2) {
+    if (heater.isOnSchedule != 1) {
         $(".zone-setpoint").html(heater.target + unit);
         $(".zone-setpoint-power").html(heater.power);
     }
