@@ -95,12 +95,14 @@ void manageSchedule(ParamsMessage target, ParamsMessage source){
   bool isOnSchedule = source.isOnSchedule == 1
      || (target.isOnSchedule == 1 && source.isOnSchedule != 2);
   
+  if(!isOnSchedule)
+    return;
   vector<vector<ScheduleRange>> schedule = source.schedule;
   if (schedule.size() == 0)
     schedule = target.schedule;
    
   struct tm timeinfo;
-  if(isOnSchedule == 1 && schedule.size() > 0  && getLocalTime(&timeinfo)){
+  if(schedule.size() > 0  && getLocalTime(&timeinfo)){
     target.schedule = schedule;
     const time_t timer = time(NULL);
     vector<ScheduleRange> daylySchedule  = schedule[timeinfo.tm_wday];
