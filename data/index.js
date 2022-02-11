@@ -28,8 +28,6 @@ var today = days[currentDay];
 //=================================================
 var visibleFlag = 1;
 var unit ="&deg;C";
-var statusMsg = false;
-var connected = false;
 var doingsave = false;
 
 
@@ -135,24 +133,6 @@ function updateclock() {
     $("#timemarker").css('left', x2 + "px");
     $("#timemarker").css('width', (x1 - x2) + "px");
 
-}
-
-function setStatus(msg,dur,pri){	 // show msg on status bar
-    if(statusMsg == true){return};
-    statusMsg= true;
-    if(pri>0){
-        $("#statusView").toggleClass("statusViewAlert",true);
-        $("#statusView").toggleClass("statusView",false);
-    } else {
-        $("#statusView").toggleClass("statusView",true);
-        $("#statusView").toggleClass("statusViewAlert",false);
-    }
-    $("#statusView").show();
-    $("#statusView").html(msg);
-    dur = dur*1000;
-    if(dur >0){
-        setTimeout(function(){$("#statusView").hide(200);$("#statusView").html(""); statusMsg= false},dur)
-    }
 }
 
 function update() {
@@ -524,7 +504,7 @@ function save() {
 	doingsave=true;
     $.ajax({
         type: 'POST',
-        url: "/postSettings",
+        url: "http://localhost/postSettings",
         data: JSON.stringify(heater),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -534,24 +514,19 @@ function save() {
         tryCount : 0,
         retryLimit : 3,			
         success: function (data) {
-			statusMsg = false;
-			if(!connected) setStatus("Connected",2,0); 
-			connected=true;
 			doingsave=false;
 		},
 		error : function(xhr, textStatus, errorThrown ) {
-        if (textStatus == 'timeout') {
-            this.tryCount++;
-            if (this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
+            if (textStatus == 'timeout') {
+                this.tryCount++;
+                if (this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }            
                 return;
-            }            
-            return;
-        }
-		if(connected) setStatus("No connection to server!",0,1);
-		connected=false;
-		doingsave=false;
+            }
+            doingsave=false;
 		}
     });
 }
@@ -559,16 +534,13 @@ function save() {
 function server_get() {
 	if (visibleFlag) {
 		$.ajax({
-			url: "/getCurentState",
+			url: "http://localhost/getCurentState",
 			dataType: 'json',
 			async: true,
 			timeout: 3000,
 			tryCount : 0,
 			retryLimit : 3,				
             success: function (data) {
-                statusMsg = false;
-                if(!connected) setStatus("Connected",2,0); 
-                connected=true;
                 if(!doingsave) {
                     if(!data.schedule) data.schedule =  heater.schedule;
                     heater=data;
@@ -586,9 +558,8 @@ function server_get() {
                     }            
                     return;
                 }
-                if(connected) setStatus("No connection to server!",0,1);
-                connected=false;
-                }
-            });
+              
+            }
+        });
 	}
 }
