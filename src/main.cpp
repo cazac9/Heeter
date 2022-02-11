@@ -142,6 +142,7 @@ void loop() {
         controlMsg.power = paramsMsg.power == 0 ? controlMsg.power : paramsMsg.power;
         controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
         controlMsg.isOn = paramsMsg.isOn == 0 ? controlMsg.isOn : paramsMsg.isOn;
+        controlMsg.scheduleRaw =  paramsMsg.schedule.size() > 0 ? paramsMsg.scheduleRaw : controlMsg.scheduleRaw;
         controlMsg.isOnSchedule = paramsMsg.isOnSchedule == 0 ? controlMsg.isOnSchedule : paramsMsg.isOnSchedule;
 
         break;
