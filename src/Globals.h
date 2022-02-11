@@ -24,8 +24,8 @@ enum Command : uint8_t {
 
 class ScheduleRange{
   public:
-    time_t  start;
-    time_t  end;
+    float start;
+    float end;
     uint8_t power;
     uint8_t targetTemp;
 

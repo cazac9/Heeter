@@ -104,11 +104,11 @@ void manageSchedule(ParamsMessage target, ParamsMessage source){
   struct tm timeinfo;
   if(schedule.size() > 0  && getLocalTime(&timeinfo)){
     target.schedule = schedule;
-    const time_t timer = time(NULL);
+    float timenow = timeinfo.tm_hour + (float)(timeinfo.tm_min / 60);
     vector<ScheduleRange> daylySchedule  = schedule[timeinfo.tm_wday];
     for (size_t i = 0; i < 10; i++)
     {
-      if(timer >= daylySchedule[i].start && timer <= daylySchedule[i].end){
+      if(timenow >= daylySchedule[i].start && timenow <= daylySchedule[i].end){
         target.targetTemp = daylySchedule[i].targetTemp;
         target.power = daylySchedule[i].power;
         break;
