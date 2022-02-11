@@ -20,7 +20,7 @@ void ScheduleManager::manage(ParamsMessage &target, ParamsMessage &source){
     target.schedule = schedule;
     float timenow = timeinfo.tm_hour + (float)(timeinfo.tm_min / 60);
     vector<ScheduleRange> daylySchedule  = schedule[timeinfo.tm_wday];
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < daylySchedule.size(); i++)
     {
       if(timenow >= daylySchedule[i].start && timenow <= daylySchedule[i].end){
         target.targetTemp = daylySchedule[i].targetTemp;
