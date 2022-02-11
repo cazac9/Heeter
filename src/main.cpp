@@ -53,7 +53,7 @@ void setup() {
   TaskHandle_t waterflow;
 
   Serial.begin(115200);
-  EEPROM.begin(EEPROM_SIZE);
+  EEPROM.begin(PARAMS_MESSAGE_SIZE);
 
   inputQ = createQueue("input");
   displayQ = createQueue("display");
@@ -79,7 +79,7 @@ void setup() {
   Serial.printf("ReadConfig %i %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power, controlMsg.isOnSchedule);
   Serial.println(controlMsg.scheduleRaw);
   
-  DynamicJsonDocument doc(4000);
+  DynamicJsonDocument doc(PARAMS_MESSAGE_SIZE);
   deserializeJson(doc, controlMsg.scheduleRaw);
   controlMsg.parseSchedule(doc.as<JsonObject>());
 }

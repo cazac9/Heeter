@@ -21,7 +21,7 @@ void HttpApiManager::runTask(void *pvParam){
   }
 
   server.on("/getCurentState", HTTP_GET, [](AsyncWebServerRequest *request){
-    StaticJsonDocument<100> doc;
+    StaticJsonDocument<PARAMS_MESSAGE_SIZE> doc;
     JsonObject obj = doc.to<JsonObject>();
     obj["target"] = msg.targetTemp;
     obj["current"] = msg.currentTemp;
@@ -37,7 +37,7 @@ void HttpApiManager::runTask(void *pvParam){
 
 server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL, 
 [input](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    DynamicJsonDocument doc(4000);
+    DynamicJsonDocument doc(PARAMS_MESSAGE_SIZE);
     deserializeJson(doc, (const char*)data);
     JsonObject object = doc.as<JsonObject>();
     msg.power = object["power"];
