@@ -10,6 +10,7 @@
 #include <EEPROM.h>
 #include <ArduinoJson.h>
 
+using namespace std;
 //todo:
 // do something with innertion
 // android app
@@ -93,7 +94,7 @@ void manageSchedule(ParamsMessage target, ParamsMessage source){
   bool isOnSchedule = source.isOnSchedule == 1
      || (target.isOnSchedule == 1 && source.isOnSchedule != 2);
   
-  std::map<uint8_t, ScheduleRange *> schedule = source.schedule;
+  vector<vector<ScheduleRange>> schedule = source.schedule;
   if (schedule.size() == 0)
     schedule = target.schedule;
    
@@ -101,7 +102,7 @@ void manageSchedule(ParamsMessage target, ParamsMessage source){
   if(isOnSchedule == 1 && schedule.size() > 0  && getLocalTime(&timeinfo)){
     target.schedule = schedule;
     const time_t timer = time(NULL);
-    ScheduleRange * daylySchedule  = schedule[timeinfo.tm_wday];
+    vector<ScheduleRange> daylySchedule  = schedule[timeinfo.tm_wday];
     for (size_t i = 0; i < 10; i++)
     {
       if(timer >= daylySchedule[i].start && timer <= daylySchedule[i].end){
@@ -123,9 +124,8 @@ void loop() {
         saveConfig(paramsMsg.targetTemp, controlMsg.targetTemp, CONFIG_TEMPERATURE_BYTE);
         saveConfig(paramsMsg.isOn, controlMsg.isOn, CONFIG_IS_ON_BYTE);
         saveConfig(paramsMsg.isOnSchedule, controlMsg.isOn, CONFIG_IS_ON_SCHEDULE_BYTE);
-        //Serial.println(paramsMsg.scheduleRaw);
-        //if(strlen(paramsMsg.scheduleRaw) > 0)
-          //EEPROM.writeString(CONFIG_IS_ON_SCHEDULE_BYTE, paramsMsg.scheduleRaw);
+        if(paramsMsg.schedule.size() > 0)
+          EEPROM.writeString(CONFIG_IS_ON_SCHEDULE_BYTE, paramsMsg.scheduleRaw);
           
         EEPROM.commit();
 

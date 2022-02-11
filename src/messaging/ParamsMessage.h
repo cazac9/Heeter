@@ -7,6 +7,8 @@
 #include <string>
 #include <ArduinoJson.h>
 
+using namespace std;
+
 class ParamsMessage {
   public:
     uint8_t currentTemp;
@@ -17,25 +19,29 @@ class ParamsMessage {
     uint8_t isOnSchedule;
     Command command;
     const char * scheduleRaw;
-    std::map<uint8_t, ScheduleRange *> schedule;
+    vector<vector<ScheduleRange>> schedule;
 
     ParamsMessage(){};
 
     void parseSchedule(JsonObject days){
       for (uint8_t i = 0; i < 7; i++){
-        std::ostringstream s;
+        ostringstream s;
         s << i; 
         JsonArray jranges = days[s.str()].as<JsonArray>();
-        ScheduleRange * ranges = (ScheduleRange*)malloc(sizeof(ScheduleRange) * jranges.size());
+        vector<ScheduleRange> ranges;
         for (size_t j = 0; j < jranges.size(); j++){
+          ScheduleRange range;
+          ranges.push_back(range);
           JsonObject jrange = jranges[j].as<JsonObject>();
           ranges[j].start = jrange["s"];
           ranges[j].end = jrange["e"];
           ranges[j].power = jrange["p"];
           ranges[j].targetTemp = jrange["t"];
+
         }
         Serial.println("insert");
-        schedule.insert(std::make_pair(i, ranges));
+        
+        schedule.push_back(ranges);
       }
     };
 
