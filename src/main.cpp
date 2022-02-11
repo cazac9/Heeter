@@ -75,12 +75,13 @@ void setup() {
   controlMsg.targetTemp = EEPROM.readByte(CONFIG_TEMPERATURE_BYTE);
   controlMsg.power = EEPROM.readByte(CONFIG_POWER_BYTE);
   controlMsg.isOnSchedule = EEPROM.readByte(CONFIG_IS_ON_SCHEDULE_BYTE);
+  controlMsg.scheduleRaw = EEPROM.readString(CONFIG_SCHEDULE_BYTE);
+  Serial.printf("ReadConfig %i %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power, controlMsg.isOnSchedule);
+  Serial.println(controlMsg.scheduleRaw);
   
-  //DynamicJsonDocument doc(512);
-  //deserializeJson(doc, EEPROM.readString(CONFIG_SCHEDULE_BYTE));
-  //controlMsg.parseSchedule(doc);
-
-  Serial.printf("ReadConfig %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power);
+  DynamicJsonDocument doc(4000);
+  deserializeJson(doc, controlMsg.scheduleRaw);
+  controlMsg.parseSchedule(doc.as<JsonObject>());
 }
 
 void saveConfig(uint8_t receivedValue, uint8_t currentValue, uint8_t storage){
@@ -126,7 +127,7 @@ void loop() {
         saveConfig(paramsMsg.isOnSchedule, controlMsg.isOnSchedule, CONFIG_IS_ON_SCHEDULE_BYTE);
         if(paramsMsg.schedule.size() > 0){
           Serial.println(paramsMsg.scheduleRaw);
-          EEPROM.writeString(CONFIG_IS_ON_SCHEDULE_BYTE, paramsMsg.scheduleRaw);
+          EEPROM.writeString(CONFIG_SCHEDULE_BYTE, paramsMsg.scheduleRaw);
           Serial.println("Saved schedule");
         }
           

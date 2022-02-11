@@ -47,7 +47,6 @@ server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL
     msg.scheduleRaw = object["schedule"].as<String>();
     msg.command = PARAMS;
  
-    Serial.println((const char*)data);
     xQueueOverwrite(input, &msg);
 
     request->send(200);
