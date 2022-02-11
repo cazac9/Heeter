@@ -37,19 +37,17 @@ void HttpApiManager::runTask(void *pvParam){
 
 server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL, 
 [input](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    Serial.println((const char*)data);
-    DynamicJsonDocument doc(512);
+    DynamicJsonDocument doc(4000);
     deserializeJson(doc, (const char*)data);
     JsonObject object = doc.as<JsonObject>();
     msg.power = object["power"];
     msg.targetTemp = object["target"];
     msg.isOn = object["isOn"];
     msg.isOnSchedule = object["isOnSchedule"];
-    msg.scheduleRaw = object["schedule"];
+    msg.scheduleRaw = object["schedule"].as<String>();
     msg.command = PARAMS;
  
-    msg.parseSchedule(object["schedule"]);
-
+    Serial.println((const char*)data);
     xQueueOverwrite(input, &msg);
 
     request->send(200);

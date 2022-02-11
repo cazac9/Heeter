@@ -18,7 +18,7 @@ class ParamsMessage {
     uint8_t isOn;
     uint8_t isOnSchedule;
     Command command;
-    const char * scheduleRaw;
+    String scheduleRaw;
     vector<vector<ScheduleRange>> schedule;
 
     ParamsMessage(){};
@@ -37,10 +37,7 @@ class ParamsMessage {
           ranges[j].end = jrange["e"];
           ranges[j].power = jrange["p"];
           ranges[j].targetTemp = jrange["t"];
-
         }
-        Serial.println("insert");
-        
         schedule.push_back(ranges);
       }
     };

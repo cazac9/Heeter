@@ -123,9 +123,12 @@ void loop() {
         saveConfig(paramsMsg.power, controlMsg.power, CONFIG_POWER_BYTE);
         saveConfig(paramsMsg.targetTemp, controlMsg.targetTemp, CONFIG_TEMPERATURE_BYTE);
         saveConfig(paramsMsg.isOn, controlMsg.isOn, CONFIG_IS_ON_BYTE);
-        saveConfig(paramsMsg.isOnSchedule, controlMsg.isOn, CONFIG_IS_ON_SCHEDULE_BYTE);
-        if(paramsMsg.schedule.size() > 0)
+        saveConfig(paramsMsg.isOnSchedule, controlMsg.isOnSchedule, CONFIG_IS_ON_SCHEDULE_BYTE);
+        if(paramsMsg.schedule.size() > 0){
+          Serial.println(paramsMsg.scheduleRaw);
           EEPROM.writeString(CONFIG_IS_ON_SCHEDULE_BYTE, paramsMsg.scheduleRaw);
+          Serial.println("Saved schedule");
+        }
           
         EEPROM.commit();
 
