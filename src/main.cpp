@@ -1,6 +1,5 @@
 #include <Tasks.h>
 #include <Globals.h>
-#include <ArduinoJson.h>
 #include <ConfigurationManager.h>
 
 using namespace std;
