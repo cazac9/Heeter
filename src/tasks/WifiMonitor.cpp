@@ -4,6 +4,8 @@
 #include <time.h>
 #include <Globals.h>
 
+_VOID      _EXFUN(tzset,	(_VOID));
+int	_EXFUN(setenv,(const char *__string, const char *__value, int __overwrite));
 
 void configureTime(){
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
