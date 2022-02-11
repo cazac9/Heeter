@@ -3,8 +3,6 @@
 #include <ConfigurationManager.h>
 #include <ScheduleManager.h>
 
-ScheduleManager schedule;
-
 ConfigurationManager:: ConfigurationManager(){
   EEPROM.begin(PARAMS_MESSAGE_SIZE);
 }
