@@ -249,6 +249,7 @@ $("body").on("mousedown", ".slider-button", function (e) {
     mousedown = 1;
     key = $(this).attr('key');
 });
+
 $("body").mouseup(function (e) {
     mousedown = 0;
     if (changed) {
@@ -268,6 +269,7 @@ $("body").on("touchstart", ".slider-button", function (e) {
     mousedown = 1;
     key = $(this).attr('key');
 });
+
 $("body").on("touchend", ".slider-button", function (e) {
     mousedown = 0;
     if (changed) {
@@ -406,7 +408,6 @@ $("#mode-split").click(function () {
     $(this).css("background-color", "#ff9600");
 });
 
-
 $("#mode-move").click(function () {
     editmode = 'move';
     $(".editmode").css("background-color", "#555");
@@ -504,7 +505,7 @@ function save() {
 	doingsave=true;
     $.ajax({
         type: 'POST',
-        url: "http://localhost/postSettings",
+        url: "/postSettings",
         data: JSON.stringify(heater),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -534,7 +535,7 @@ function save() {
 function server_get() {
 	if (visibleFlag) {
 		$.ajax({
-			url: "http://localhost/getCurentState",
+			url: "/getCurentState",
 			dataType: 'json',
 			async: true,
 			timeout: 3000,
