@@ -1,6 +1,9 @@
 #include <Globals.h>
 #include <EEPROM.h>
 #include <ConfigurationManager.h>
+#include <ScheduleManager.h>
+
+ScheduleManager schedule;
 
 ConfigurationManager:: ConfigurationManager(){
   EEPROM.begin(PARAMS_MESSAGE_SIZE);
@@ -19,7 +22,7 @@ ParamsMessage ConfigurationManager::load(){
 
   DynamicJsonDocument doc(PARAMS_MESSAGE_SIZE);
   deserializeJson(doc, controlMsg.scheduleRaw);
-  controlMsg.parseSchedule(doc.as<JsonObject>());
+  schedule.parse(doc.as<JsonObject>());
 
   return controlMsg;
 }

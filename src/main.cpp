@@ -1,6 +1,7 @@
 #include <Tasks.h>
 #include <Globals.h>
 #include <ConfigurationManager.h>
+#include <ScheduleManager.h>
 
 using namespace std;
 //todo:
@@ -15,6 +16,7 @@ QueueHandle_t inputQ;
 QueueHandle_t httpQ;
 
 ConfigurationManager config;
+ScheduleManager schedule;
 
 ParamsMessage controlMsg;
 
@@ -59,32 +61,6 @@ void setup() {
   createTask(WifiMonitor::runTask, "monitor", NULL, 10 * 1024);
 }
 
-void manageSchedule(ParamsMessage target, ParamsMessage source){
-  bool isOnSchedule = source.isOnSchedule == 1
-     || (target.isOnSchedule == 1 && source.isOnSchedule != 2);
-  
-  if(!isOnSchedule)
-    return;
-  vector<vector<ScheduleRange>> schedule = source.schedule;
-  if (schedule.size() == 0)
-    schedule = target.schedule;
-   
-  struct tm timeinfo;
-  if(schedule.size() > 0  && getLocalTime(&timeinfo)){
-    target.schedule = schedule;
-    float timenow = timeinfo.tm_hour + (float)(timeinfo.tm_min / 60);
-    vector<ScheduleRange> daylySchedule  = schedule[timeinfo.tm_wday];
-    for (size_t i = 0; i < 10; i++)
-    {
-      if(timenow >= daylySchedule[i].start && timenow <= daylySchedule[i].end){
-        target.targetTemp = daylySchedule[i].targetTemp;
-        target.power = daylySchedule[i].power;
-        break;
-      }
-    }
-  }
-}
-
 void loop() {
   ParamsMessage paramsMsg;
   if(xQueueReceive(inputQ, &paramsMsg, portMAX_DELAY) == pdTRUE){
@@ -92,8 +68,7 @@ void loop() {
     {
       case PARAMS:
         config.save(paramsMsg, controlMsg);
-
-        //manageSchedule(controlMsg, paramsMsg);
+        schedule.manage(controlMsg, paramsMsg);
 
         controlMsg.currentTemp = paramsMsg.currentTemp == 0 ? controlMsg.currentTemp : paramsMsg.currentTemp;
         controlMsg.targetTemp = paramsMsg.targetTemp == 0 ? controlMsg.targetTemp : paramsMsg.targetTemp;
