@@ -5,9 +5,7 @@
 #include <ArduinoJson.h>
 #include <AsyncElegantOTA.h>
 #include <SPIFFS.h>
-#include <ScheduleManager.h>
 
-ScheduleManager schedule;
 ParamsMessage msg;
 AsyncWebServer server(80);
 
@@ -49,7 +47,6 @@ server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL
     msg.targetTemp = object["target"];
     msg.isOn = object["isOn"];
     msg.isOnSchedule = object["isOnSchedule"];
-    msg.schedule = schedule.parse(object["schedule"]);
     msg.scheduleRaw = object["schedule"].as<String>();
     msg.command = PARAMS;
  

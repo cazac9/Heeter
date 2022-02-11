@@ -31,7 +31,11 @@ void ScheduleManager::manage(ParamsMessage &target, ParamsMessage &source){
   }
 }
 
-vector<vector<ScheduleRange>> ScheduleManager::parse(JsonObject days){
+vector<vector<ScheduleRange>> ScheduleManager::parse(String json){
+  DynamicJsonDocument doc(PARAMS_MESSAGE_SIZE);
+  deserializeJson(doc, json);
+  JsonObject days = doc.as<JsonObject>();
+
   vector<vector<ScheduleRange>> schedule;
   for (uint8_t i = 0; i < 7; i++){
     ostringstream s;

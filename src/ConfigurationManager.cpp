@@ -16,14 +16,11 @@ ParamsMessage ConfigurationManager::load(){
   controlMsg.power = EEPROM.readByte(CONFIG_POWER_BYTE);
   controlMsg.isOnSchedule = EEPROM.readByte(CONFIG_IS_ON_SCHEDULE_BYTE);
   controlMsg.scheduleRaw = EEPROM.readString(CONFIG_SCHEDULE_BYTE);
+  controlMsg.schedule = schedule.parse(controlMsg.scheduleRaw);
 
   Serial.printf("ReadConfig %i %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power, controlMsg.isOnSchedule);
   Serial.println(controlMsg.scheduleRaw);
-
-  DynamicJsonDocument doc(PARAMS_MESSAGE_SIZE);
-  deserializeJson(doc, controlMsg.scheduleRaw);
-  schedule.parse(doc.as<JsonObject>());
-
+  
   return controlMsg;
 }
 

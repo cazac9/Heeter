@@ -77,7 +77,8 @@ void loop() {
         controlMsg.isOn = paramsMsg.isOn == 0 ? controlMsg.isOn : paramsMsg.isOn;
         controlMsg.scheduleRaw =  paramsMsg.schedule.size() > 0 ? paramsMsg.scheduleRaw : controlMsg.scheduleRaw;
         controlMsg.isOnSchedule = paramsMsg.isOnSchedule == 0 ? controlMsg.isOnSchedule : paramsMsg.isOnSchedule;
-
+        controlMsg.schedule = schedule.parse(paramsMsg.scheduleRaw);
+        
         break;
       case POWER_UP:
         {

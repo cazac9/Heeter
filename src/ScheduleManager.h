@@ -2,12 +2,11 @@
 #define SHEDULE_MANAGER_H
 
 #include <Globals.h>
-#include <ArduinoJson.h>
 
 class ScheduleManager {
   public:
     void manage(ParamsMessage &target, ParamsMessage &source);
-    vector<vector<ScheduleRange>> parse(JsonObject days);
+    vector<vector<ScheduleRange>> parse(String json);
     ScheduleManager(){};
 };
 
