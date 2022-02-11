@@ -28,7 +28,11 @@ void HttpApiManager::runTask(void *pvParam){
     obj["power"] = msg.power;
     obj["isOn"] = msg.isOn;
     obj["isOnSchedule"] = msg.isOnSchedule;
-    obj["schedule"] = msg.scheduleRaw;
+
+    DynamicJsonDocument doc2(PARAMS_MESSAGE_SIZE);
+    deserializeJson(doc2, msg.scheduleRaw);
+    JsonObject obj2 = doc2.as<JsonObject>();
+    obj["schedule"] = obj2;
 
     String response;
     serializeJson(doc, response);
