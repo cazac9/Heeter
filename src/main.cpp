@@ -2,6 +2,7 @@
 #include <Globals.h>
 #include <ConfigurationManager.h>
 #include <ScheduleManager.h>
+#include <EEPROM.h>
 
 using namespace std;
 //todo:
@@ -41,6 +42,7 @@ void createTask(TaskFunction_t task, const char * name, QueueHandle_t q, int sta
 
 void setup() {
   Serial.begin(115200);
+  EEPROM.begin(PARAMS_MESSAGE_SIZE);
 
   controlMsg = config.load();
 

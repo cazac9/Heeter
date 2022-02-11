@@ -3,10 +3,6 @@
 #include <ConfigurationManager.h>
 #include <ScheduleManager.h>
 
-ConfigurationManager:: ConfigurationManager(){
-  EEPROM.begin(PARAMS_MESSAGE_SIZE);
-}
-
 ParamsMessage ConfigurationManager::load(){
   ParamsMessage controlMsg;
   controlMsg.isOn = EEPROM.readByte(CONFIG_IS_ON_BYTE);
