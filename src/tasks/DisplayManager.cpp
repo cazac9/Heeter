@@ -1,6 +1,6 @@
-#include <DisplayManager.h>
+#include <tasks/DisplayManager.h>
 #include <Adafruit_SSD1306.h>
-#include <messaging/ParamsMessage.h>
+#include <Globals.h>
 
 void DisplayManager::runTask(void *pvParam){
   Adafruit_SSD1306 display(128, 64, &Wire);

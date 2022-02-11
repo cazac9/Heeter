@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 #include <credentials.h>
+#include <poco/Command.h>
+#include <poco/ScheduleRange.h>
+#include <poco/ParamsMessage.h>
 
 #define MAX_POWER  3
 #define MIN_POWER  1
@@ -16,20 +19,5 @@
 #define CONFIG_POWER_BYTE 2
 #define CONFIG_IS_ON_SCHEDULE_BYTE 3
 #define CONFIG_SCHEDULE_BYTE 4
-
-enum Command : uint8_t { 
-  POWER_UP,
-  PARAMS
-};
-
-class ScheduleRange{
-  public:
-    float start;
-    float end;
-    uint8_t power;
-    uint8_t targetTemp;
-
-    ScheduleRange(){};
-};
 
 #endif

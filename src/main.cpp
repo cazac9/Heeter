@@ -1,12 +1,5 @@
-#include <messaging/ParamsMessage.h>
-#include <HeaterManager.h>
-#include <TermocoupleManager.h>
-#include <DisplayManager.h>
-#include <EncoderManager.h>
+#include <tasks.h>
 #include <Globals.h>
-#include <WifiMonitor.h>
-#include <HttpApiManager.h>
-#include <WaterFlowManager.h>
 #include <EEPROM.h>
 #include <ArduinoJson.h>
 

@@ -1,8 +1,7 @@
 #include <ESPRotary.h>
 #include <Button2.h> 
-#include <EncoderManager.h>
+#include <tasks/EncoderManager.h>
 #include <Globals.h>
-#include <messaging/ParamsMessage.h>
 
 QueueHandle_t encoderQ;
 ParamsMessage params;
