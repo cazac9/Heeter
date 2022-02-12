@@ -44,28 +44,18 @@ var heater = {
 
 var day1 = [{
     s: 0,
-    e: 6,
-    t: 8,
+    e: 7,
+    t: 45,
     p: 2
 }, {
-    s: 6,
-    e: 9,
-    t: 18,
-    p: 2
-}, {
-    s: 9,
-    e: 17,
-    t: 12,
-    p: 2
-}, {
-    s: 17,
+    s: 7,
     e: 22,
-    t: 18,
-    p: 2
+    t: 20,
+    p: 1
 }, {
     s: 22,
     e: 24,
-    t: 8,
+    t: 45,
     p: 2
 }];
 
@@ -133,6 +123,8 @@ function updateclock() {
     $("#timemarker").css('left', x2 + "px");
     $("#timemarker").css('width', (x1 - x2) + "px");
 
+    for (day in heater.schedule) draw_day_slider(day);
+
 }
 
 function update() {
@@ -147,7 +139,7 @@ function update() {
 		$("#toggle").css("background-color", "#555");
 	}
 	
-	if (heater.isOnSchedule === 1) {
+	if (heater.isOnSchedule === 2) {
 		$(".heatermode").css("background-color", "#555");
 		$("#manual_heater").css("background-color", "#ff9600");
 		$("#scheduled_heater").css("background-color", "#555");
@@ -440,7 +432,7 @@ $("#scheduled_heater").click(function () {
 });
 
 function color_map(temperature) {
-    var f = (temperature - 5) / 19;
+    var f = temperature / 80;
     var a = (1 - f);
     var Y = Math.floor(255 * a);
     r = 255;
