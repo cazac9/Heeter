@@ -51,7 +51,8 @@
         <div id="slider-segment-block" style="display:none">START:
             <input type="text" id="slider-segment-start" style="margin-right:4px" />END:
             <input type="text" id="slider-segment-end" style="margin-right:4px" />SET:
-            <input type="text" id="slider-segment-temperature" /><span id="unit"></span>
+            <input type="number" id="slider-segment-temperature"  min="20" max="80" step="2"/><span id="unit">&deg;C</span>
+            <input type="number" id="slider-segment-power" min="1" max="3" />
             <button id="slider-segment-ok" style="float:right">OK</button>
         </div>
         <div id="slider-segment-block-movepos" style="display:none">TIME:

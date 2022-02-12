@@ -319,7 +319,8 @@ $("body").on("click", ".slider-segment", function (e) {
         }
         //editmode = 'move';
     } else if (editmode == 'move') {
-        $("#slider-segment-temperature").val((heater.schedule[day][key].t * 1).toFixed(1));
+        $("#slider-segment-temperature").val(heater.schedule[day][key].t);
+        $("#slider-segment-power").val(heater.schedule[day][key].p);
         $("#slider-segment-start").val(format_time(heater.schedule[day][key].s));
         $("#slider-segment-end").val(format_time(heater.schedule[day][key].e));
 
@@ -352,6 +353,7 @@ function slider_update(e) {
 $("body").on("click", "#slider-segment-ok", function () {
 
     heater.schedule[day][key].t = $("#slider-segment-temperature").val();
+    heater.schedule[day][key].p = $("#slider-segment-power").val();
     var color = color_map(heater.schedule[day][key].t);
     $(".slider[day=" + days[day] + "]").find(".slider-segment[key=" + key + "]").css("background-color", color);
 
