@@ -123,7 +123,7 @@ function updateclock() {
     $("#timemarker").css('left', x2 + "px");
     $("#timemarker").css('width', (x1 - x2) + "px");
 
-    for (day in heater.schedule) draw_day_slider(day);
+    for (var dayToRefresh in heater.schedule) draw_day_slider(dayToRefresh);
 
 }
 
@@ -216,7 +216,7 @@ $("#zone-setpoint-inc-power").click(function () {
 // ============================================
 // SCHEDULER
 
-for (day in heater.schedule) draw_day_slider(day);
+for (var dayToRefresh in heater.schedule) draw_day_slider(dayToRefresh);
 
 function draw_day_slider(day) {
     var out = "";
