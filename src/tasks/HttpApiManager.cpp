@@ -20,6 +20,9 @@ void HttpApiManager::runTask(void *pvParam){
   }
 
   server.on("/getCurentState", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(USER, PASSWORD))
+      return request->requestAuthentication();
+
     StaticJsonDocument<PARAMS_MESSAGE_SIZE> doc;
     JsonObject obj = doc.to<JsonObject>();
     obj["target"] = msg.targetTemp;
@@ -40,6 +43,9 @@ void HttpApiManager::runTask(void *pvParam){
 
 server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL, 
 [input](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+    if(!request->authenticate(USER, PASSWORD))
+      return request->requestAuthentication();
+
     DynamicJsonDocument doc(PARAMS_MESSAGE_SIZE);
     deserializeJson(doc, (const char*)data);
     JsonObject object = doc.as<JsonObject>();
@@ -57,12 +63,15 @@ server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL
   });
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(!request->authenticate(USER, PASSWORD))
+      return request->requestAuthentication();
+
     request->send(SPIFFS, "/index.html", "text/html",false);
   });
 
   server.serveStatic("/", SPIFFS, "/");
   SPIFFS.begin();
-  AsyncElegantOTA.begin(&server, OTA_USER, PASSWORD); 
+  AsyncElegantOTA.begin(&server, USER, PASSWORD); 
   server.begin();
 
 
