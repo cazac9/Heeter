@@ -7,8 +7,6 @@
 using namespace std;
 //todo:
 // do something with innertion
-// android app
-// introduce schedule 
 // encoder is working weird
 
 QueueHandle_t displayQ;
