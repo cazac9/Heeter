@@ -15,8 +15,8 @@ void EncoderManager::runTask(void *pvParam){
   ESPRotary r;
   Button2 b;
 
-  b.begin(14);
-  r.begin(12, 13, 1, MIN_POS, MAX_POS, START_POS, 2);
+  b.begin(13);
+  r.begin(12, 14, 1, MIN_POS, MAX_POS, START_POS, 2);
   b.setTapHandler([](Button2& btn){
     unsigned int time = btn.wasPressedFor();
     if (time < 1000)

@@ -2,8 +2,12 @@
 #include <tasks/TermocoupleManager.h>
 #include <Globals.h>
 
+#define T_SCK 5
+#define T_SS 18
+
 void TermocoupleManager::runTask(void *pvParam){
-  MAX6675 thermocouple(SCK, SS, MISO);
+  
+  MAX6675 thermocouple(T_SCK, T_SS, MISO);
   ParamsMessage params;
   while (true)
   {
