@@ -22,6 +22,7 @@ void EncoderManager::runTask(void *pvParam){
     if (time < 1000)
     {
       params.command = POWER_UP;
+      params.isOnSchedule = 2;
       xQueueOverwrite(encoderQ, &params);
     }
   });
@@ -33,6 +34,7 @@ void EncoderManager::runTask(void *pvParam){
       params.command = PARAMS;
       params.targetTemp = DEFAULT_TEMP;
       params.power = DEFAULT_POWER;
+      params.isOnSchedule = 2;
       xQueueOverwrite(encoderQ, &params);
     }
   });
@@ -40,6 +42,7 @@ void EncoderManager::runTask(void *pvParam){
   r.setChangedHandler([](ESPRotary& r) {
     params.command = PARAMS;
     params.isOn = 1;
+    params.isOnSchedule = 2;
     params.targetTemp = (uint8_t)r.getPosition();
     xQueueOverwrite(encoderQ, &params);
   });
