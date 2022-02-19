@@ -18,7 +18,8 @@ void DisplayManager::runTask(void *pvParam){
   {
     if (xQueueReceive((QueueHandle_t)pvParam, &msg, portMAX_DELAY) == pdTRUE)
     {
-      const char * errorCode= "";
+      const char * errorCode= msg.isOnSchedule == 1 ? "SCHEDULE" : "MANUAL";
+
       if (msg.flow <= MIN_WATER_FLOW){
         errorCode = "E_WTR_FLW";
       }

@@ -88,6 +88,7 @@ void loop() {
           paramsMsg.power = power;
 
           config.save(paramsMsg, controlMsg);
+          controlMsg.power = power;
           break;
         }
       default:
