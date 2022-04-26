@@ -53,7 +53,10 @@ server.on("/postSettings", HTTP_POST, [](AsyncWebServerRequest *request){}, NULL
     msg.targetTemp = object["target"];
     msg.isOn = object["isOn"];
     msg.isOnSchedule = object["isOnSchedule"];
-    msg.scheduleRaw = object["schedule"].as<String>();
+
+    String tmp = object["schedule"];
+    msg.scheduleRaw = new char[tmp.length() + 1];
+    strcpy (msg.scheduleRaw, tmp.c_str());
     msg.command = PARAMS;
  
     xQueueOverwrite(input, &msg);

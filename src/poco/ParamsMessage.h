@@ -14,10 +14,12 @@ class ParamsMessage {
     uint8_t isOn;
     uint8_t isOnSchedule;
     Command command;
-    String scheduleRaw;
+    char * scheduleRaw;
     vector<vector<ScheduleRange>> schedule;
 
-    ParamsMessage(){};
+    ParamsMessage(){
+      scheduleRaw = nullptr;
+    };
 };
 
 

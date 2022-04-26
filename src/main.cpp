@@ -68,6 +68,8 @@ void loop() {
     {
       case PARAMS:
         config.save(paramsMsg, controlMsg);
+
+        controlMsg.schedule = schedule.parse(paramsMsg.scheduleRaw);
         schedule.manage(controlMsg, paramsMsg);
 
         controlMsg.currentTemp = paramsMsg.currentTemp == 0 ? controlMsg.currentTemp : paramsMsg.currentTemp;
@@ -75,10 +77,14 @@ void loop() {
         controlMsg.power = paramsMsg.power == 0 ? controlMsg.power : paramsMsg.power;
         controlMsg.flow = paramsMsg.flow == 0 ? controlMsg.flow : paramsMsg.flow;
         controlMsg.isOn = paramsMsg.isOn == 0 ? controlMsg.isOn : paramsMsg.isOn;
-        controlMsg.scheduleRaw =  paramsMsg.schedule.size() > 0 ? paramsMsg.scheduleRaw : controlMsg.scheduleRaw;
         controlMsg.isOnSchedule = paramsMsg.isOnSchedule == 0 ? controlMsg.isOnSchedule : paramsMsg.isOnSchedule;
-        controlMsg.schedule = schedule.parse(paramsMsg.scheduleRaw);
-        
+       
+        if(paramsMsg.scheduleRaw != nullptr)
+        {
+          delete[] controlMsg.scheduleRaw;
+          controlMsg.scheduleRaw = paramsMsg.scheduleRaw;
+        }
+
         break;
       case POWER_UP:
         {
@@ -95,8 +101,16 @@ void loop() {
         break;
     }
 
-    xQueueOverwrite(displayQ, &controlMsg);
-    xQueueOverwrite(heatersQ, &controlMsg);
-    xQueueOverwrite(httpQ, &controlMsg);
+    ParamsMessage msgToSend;
+    msgToSend.currentTemp = controlMsg.currentTemp;
+    msgToSend.targetTemp = controlMsg.targetTemp;
+    msgToSend.power = controlMsg.power;
+    msgToSend.flow = controlMsg.flow;
+    msgToSend.isOn  = controlMsg.isOn; 
+    msgToSend.scheduleRaw = controlMsg.scheduleRaw; 
+
+    xQueueOverwrite(displayQ, &msgToSend);
+    xQueueOverwrite(heatersQ, &msgToSend);
+    xQueueOverwrite(httpQ, &msgToSend);
   }
 }

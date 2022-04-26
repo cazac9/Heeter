@@ -9,9 +9,10 @@ ParamsMessage ConfigurationManager::load(){
   controlMsg.targetTemp = EEPROM.readByte(CONFIG_TEMPERATURE_BYTE);
   controlMsg.power = EEPROM.readByte(CONFIG_POWER_BYTE);
   controlMsg.isOnSchedule = EEPROM.readByte(CONFIG_IS_ON_SCHEDULE_BYTE);
-  controlMsg.scheduleRaw = EEPROM.readString(CONFIG_SCHEDULE_BYTE);
   controlMsg.schedule = schedule.parse(controlMsg.scheduleRaw);
-
+  String tmp = EEPROM.readString(CONFIG_SCHEDULE_BYTE);
+  controlMsg.scheduleRaw = new char[tmp.length() + 1];
+  strcpy(controlMsg.scheduleRaw, tmp.c_str());
   Serial.printf("ReadConfig %i %i %i %i\n", controlMsg.isOn, controlMsg.targetTemp, controlMsg.power, controlMsg.isOnSchedule);
   Serial.println(controlMsg.scheduleRaw);
   
